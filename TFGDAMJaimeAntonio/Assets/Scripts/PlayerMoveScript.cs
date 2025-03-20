@@ -5,14 +5,16 @@ using UnityEngine;
 public class PlayerMoveScript : MonoBehaviour
 {
     private bool CanJump = false;
+    private Rigidbody2D Rb2D;
+    private float MovementSpeed = 3.5f;
     // Start is called before the first frame update
     void Start()
     {
-
+        Rb2D = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         CheckMovement();
         CheckJump();
@@ -20,10 +22,12 @@ public class PlayerMoveScript : MonoBehaviour
 
     private void CheckMovement()
     {
-        if (Input.GetKey("left"))
-            gameObject.transform.position = new Vector2(gameObject.transform.position.x + -3f * Time.deltaTime, gameObject.transform.position.y);
-        else if (Input.GetKey("right"))
-            gameObject.transform.position = new Vector2(gameObject.transform.position.x + 3f * Time.deltaTime, gameObject.transform.position.y);
+        if (Input.GetKey("right"))
+            Rb2D.velocity = Vector2.right * MovementSpeed;
+        else if (Input.GetKey("left"))
+            Rb2D.velocity = Vector2.left * MovementSpeed;
+        else
+            Rb2D.velocity = new Vector2(0, Rb2D.velocity.y);
     }
 
     private void CheckJump()
