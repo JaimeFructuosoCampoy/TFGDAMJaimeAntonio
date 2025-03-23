@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerMoveScript : MonoBehaviour
 {
-    private bool CanJump = false;
+    private bool CanJump;
     private Rigidbody2D Rb2D;
     private float MovementSpeed = 3.5f;
     public float JumpSpeed = 5f;
@@ -33,15 +33,25 @@ public class PlayerMoveScript : MonoBehaviour
 
     private void CheckJump()
     {
-        if (Rb2D.velocity.y <= 0)
-        {
-            CanJump = true;
-        }
-
-        if ((Input.GetKey(KeyCode.Space) || Input.GetKey("up") || Input.GetKey("w")) && CanJump && gameObject.transform.position.y < 10)
+        if ((Input.GetKey(KeyCode.Space) || Input.GetKey("up") || Input.GetKey("w")) && CanJump)
         {
             Rb2D.velocity = new Vector2(Rb2D.velocity.x, JumpSpeed);
         }
+    }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+            CanJump = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+            CanJump = false;
+        }
     }
 }
