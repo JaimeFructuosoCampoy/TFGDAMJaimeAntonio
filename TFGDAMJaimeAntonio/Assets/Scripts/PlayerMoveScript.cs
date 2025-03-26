@@ -17,6 +17,7 @@ public class PlayerMoveScript : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        gameObject.SetActive(!GlobalData.GameOver);
         CheckMovement();
         CheckJump();
     }
@@ -41,10 +42,17 @@ public class PlayerMoveScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground")
+        string collisionGameobjectTag = collision.gameObject.tag;
+        switch (collisionGameobjectTag)
         {
-            CanJump = true;
+            case "Ground":
+                CanJump = true;
+                break;
+            case "Enemy":
+                GlobalData.GameOver = true;
+                break;
         }
+            CanJump = true;
     }
 
     private void OnCollisionExit2D(Collision2D collision)
