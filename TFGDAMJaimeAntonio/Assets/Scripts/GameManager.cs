@@ -7,7 +7,7 @@ public class SceneManager : MonoBehaviour
 {
     public TMP_Text GameOverText;
     private int Points = 0;
-    public TMP_Text Count;
+    public TMP_Text CountText;
     void Start()
     {
         
@@ -30,6 +30,6 @@ public class SceneManager : MonoBehaviour
     private void UpdateCount()
     {
         Points++;
-        Count.SetText(Points.ToString());
+        CountText.SetText(Points.ToString());
     }
 }

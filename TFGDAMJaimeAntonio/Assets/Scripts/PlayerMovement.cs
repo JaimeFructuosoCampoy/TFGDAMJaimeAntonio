@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -9,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D Rb2D;
     private float MovementSpeed = 3.5f;
     public float JumpSpeed = 5f;
+    private int Coins = 0;
+    public TMP_Text CoinsText;
     // Start is called before the first frame update
     void Start()
     {
@@ -70,6 +73,19 @@ public class PlayerMovement : MonoBehaviour
             case "Ground":
             case "Wall":
                 CanJump = false;
+                break;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        string triggerGameobjectTag = collision.gameObject.tag;
+        switch (triggerGameobjectTag)
+        {
+            case "Coin":
+                Destroy(collision.gameObject);
+                Coins++;
+                CoinsText.SetText(Coins.ToString());
                 break;
         }
     }
