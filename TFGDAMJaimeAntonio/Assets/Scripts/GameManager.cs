@@ -6,6 +6,8 @@ using UnityEngine;
 public class SceneManager : MonoBehaviour
 {
     public TMP_Text GameOverText;
+    private int Points = 0;
+    public TMP_Text Count;
     void Start()
     {
         
@@ -16,10 +18,18 @@ public class SceneManager : MonoBehaviour
     {
         if (GlobalData.GameOver == true)
             ShowGameOver();
+        else
+            UpdateCount();
     }
 
     private void ShowGameOver()
     {
         GameOverText.gameObject.SetActive(true);
+    }
+
+    private void UpdateCount()
+    {
+        Points++;
+        Count.SetText(Points.ToString());
     }
 }
