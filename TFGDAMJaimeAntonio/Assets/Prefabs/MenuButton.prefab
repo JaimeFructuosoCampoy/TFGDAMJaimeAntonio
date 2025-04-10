@@ -65,7 +65,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: 'Shop
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 26a89de098a7f49459a596502cda8878, type: 2}
   m_sharedMaterial: {fileID: 2220265901165026458, guid: 26a89de098a7f49459a596502cda8878, type: 2}
@@ -243,7 +245,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 118.5, y: 0.21670008}
+  m_AnchoredPosition: {x: 118.5, y: 0.21670151}
   m_SizeDelta: {x: 60.2739, y: 70.0429}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &8395273937184363990
@@ -318,7 +320,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.21670008}
+  m_AnchoredPosition: {x: 0, y: 0.21670151}
   m_SizeDelta: {x: 60.2739, y: 70.0429}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4334992690387465747
@@ -372,6 +374,7 @@ GameObject:
   - component: {fileID: 3478222128460489919}
   - component: {fileID: 7536931415348237191}
   - component: {fileID: 3401708368086382085}
+  - component: {fileID: 8430620500064109566}
   m_Layer: 5
   m_Name: MenuButton
   m_TagString: Untagged
@@ -508,3 +511,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e38fa5110a3752c4ab5e91635a5faeae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TitleText: {fileID: 0}
+--- !u!114 &8430620500064109566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8309175230566829403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 3401708368086382085}
+          m_TargetAssemblyTypeName: ButtonScript, Assembly-CSharp
+          m_MethodName: OnPointerEnterButton
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 3401708368086382085}
+          m_TargetAssemblyTypeName: ButtonScript, Assembly-CSharp
+          m_MethodName: OnPointerExitButton
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2

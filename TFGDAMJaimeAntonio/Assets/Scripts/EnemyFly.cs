@@ -4,37 +4,36 @@ using UnityEngine;
 
 public class EnemyFly : MonoBehaviour
 {
-    public float speed = 1.5f;
-    public float distance = 4.0f; //Distancia hasta que cambia de direccion
-    private bool isMovingRight = true;
-    private Vector2 startPos;
-    private SpriteRenderer spriteRenderer;
+    public float Speed = 1.5f;
+    public float Distance = 4.0f; //Distancia hasta que cambia de direccion
+    private bool IsMovingRight = true;
+    private Vector2 StartPos;
+    private SpriteRenderer EnemySprite;
 
     void Start()
     {
-        startPos = transform.position;
-        spriteRenderer = GetComponent<SpriteRenderer>();
-
+        StartPos = transform.position;
+        EnemySprite = GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
-        float direction = isMovingRight ? 1f : -1f;
-        float move = speed * Time.deltaTime * direction;
+        float direction = IsMovingRight ? 1f : -1f;
+        float move = Speed * Time.deltaTime * direction;
 
         transform.Translate(move, 0f, 0f);
 
-        float movedDistance = Vector2.Distance(transform.position, startPos);
+        float movedDistance = Vector2.Distance(transform.position, StartPos);
 
-        if (movedDistance >= distance)
+        if (movedDistance >= Distance)
         {
-            isMovingRight = !isMovingRight;
-            startPos = transform.position;
+            IsMovingRight = !IsMovingRight;
+            StartPos = transform.position;
 
             //Volteo el sprite horizontalmente cuando cambia de direccion
-            if (spriteRenderer != null)
+            if (EnemySprite != null)
             {
-                spriteRenderer.flipX = !spriteRenderer.flipX;
+                EnemySprite.flipX = !EnemySprite.flipX;
             }
         }
     }
