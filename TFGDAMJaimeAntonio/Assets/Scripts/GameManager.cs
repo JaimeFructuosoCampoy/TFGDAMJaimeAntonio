@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class SceneManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public TMP_Text GameOverText;
     private int Points = 0;
