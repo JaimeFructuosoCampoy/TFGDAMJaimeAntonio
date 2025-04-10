@@ -6,38 +6,40 @@ using UnityEngine;
 public class Platform : MonoBehaviour
 {
     public float speed = 1.0f;
-    public float distance = 5.0f; //Distancia de movimiento
-    private bool isMovingRight = true;
+    public float distance = 5.0f;
+    public bool isMovingRight = true;
     private Vector2 startPos;
-    // Start is called before the first frame update
+    private Rigidbody2D rb;
+
     void Start()
     {
         startPos = transform.position;
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        float direction;
+        float direction = isMovingRight ? 1.0f : -1.0f;
+        Vector2 move = new Vector2(direction * speed * Time.fixedDeltaTime, 0f);
+        rb.MovePosition(rb.position + move);
 
-        if (isMovingRight)
+        float movedDistance = Vector2.Distance(rb.position, startPos);
+        if (movedDistance >= distance)
         {
-            direction = 1.0f; //Mover a la derecha
+            isMovingRight = !isMovingRight;
+            startPos = rb.position;
         }
-        else
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log("Colisión con: " + collision.collider.name); // Agregá esto
+        if (collision.collider.CompareTag("Wall"))
         {
-            direction = -1.0f; //Mover a la izquierda
-        }
-        float move = speed * Time.deltaTime * direction;
-
-        transform.Translate(move, 0f, 0f);
-
-        float movedDistace = Vector2.Distance(transform.position, startPos);
-
-        if (movedDistace >= distance)
-        {
-            isMovingRight = !isMovingRight; //Cambia la direccion
-            startPos = transform.position; //Actualizamos posicion
+            Debug.Log("¡Colisión con pared!");
+            isMovingRight = !isMovingRight;
+            startPos = rb.position;
         }
     }
 }
+

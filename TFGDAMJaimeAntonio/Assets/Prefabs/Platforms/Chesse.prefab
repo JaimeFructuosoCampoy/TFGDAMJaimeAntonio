@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 3176619624858472709}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.848, y: -0.248, z: -0.11941145}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -110,7 +110,7 @@ Transform:
   m_GameObject: {fileID: 3423217067411851929}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.015, y: -0.248, z: -0.11941145}
+  m_LocalPosition: {x: -0.178, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -179,9 +179,10 @@ GameObject:
   - component: {fileID: 2110018874399911046}
   - component: {fileID: 7288245398940586859}
   - component: {fileID: 610849949358062751}
+  - component: {fileID: 1005563256281629910}
   m_Layer: 0
   m_Name: Chesse
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -213,7 +214,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 4025928082553450082}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 9881c75cceef17b458b89d894d9b9507, type: 2}
+  m_Material: {fileID: 6200000, guid: 086f8ff6085cd4945986972110816779, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -263,6 +264,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   distance: 3
+  isMovingRight: 1
+--- !u!50 &1005563256281629910
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4025928082553450082}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &6848539415692532672
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,7 +318,7 @@ Transform:
   m_GameObject: {fileID: 6848539415692532672}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.672, y: -0.248, z: -0.11941145}
+  m_LocalPosition: {x: 0.16, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
