@@ -94,10 +94,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6217661946338962839}
   - component: {fileID: 680734488026226982}
-  - component: {fileID: 2012738262270667766}
   - component: {fileID: 8022227269203641346}
+  - component: {fileID: 7330274892183330319}
   m_Layer: 0
-  m_Name: Cloud
+  m_Name: CloudSpawn
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -166,21 +166,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.43827152, y: 0.13755983}
   m_EdgeRadius: 0
---- !u!114 &2012738262270667766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1570637653939595254}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e1fb32587fbee245b56392e8d84f3a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Speed: 1
-  Distance: 5
-  IsMovingRight: 1
 --- !u!50 &8022227269203641346
 Rigidbody2D:
   serializedVersion: 4
@@ -208,6 +193,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &7330274892183330319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570637653939595254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500d49f71c088094b8fe3a18bb45d992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Speed: 1
+  Distance: 5
+  IsMovingRight: 1
+  playerMovement: {fileID: 0}
+  prefabGota: {fileID: 0}
+  intervalo: 1.5
 --- !u!1 &4054180281172425812
 GameObject:
   m_ObjectHideFlags: 0

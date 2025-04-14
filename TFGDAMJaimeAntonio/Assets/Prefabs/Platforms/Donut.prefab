@@ -72,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 11
   m_Sprite: {fileID: 1103608656, guid: 0b77b928ef9ff204a8c4c4fc9cb99db6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -178,9 +178,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e1fb32587fbee245b56392e8d84f3a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  distance: 3
-  isMovingRight: 1
+  Speed: 1
+  Distance: 5
+  IsMovingRight: 1
 --- !u!50 &6732989532031922660
 Rigidbody2D:
   serializedVersion: 4
@@ -280,7 +280,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 11
   m_Sprite: {fileID: 2083540970, guid: 0b77b928ef9ff204a8c4c4fc9cb99db6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -364,7 +364,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 11
   m_Sprite: {fileID: -1280773471, guid: 0b77b928ef9ff204a8c4c4fc9cb99db6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

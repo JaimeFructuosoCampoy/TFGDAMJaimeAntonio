@@ -90,4 +90,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public int GetCoins
+    {
+        get { return Coins; }
+    }
+
 }
