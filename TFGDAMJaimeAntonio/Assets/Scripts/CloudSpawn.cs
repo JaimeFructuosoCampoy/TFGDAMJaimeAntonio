@@ -1,42 +1,35 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CloudSpawn : MonoBehaviour
 {
-    public float Speed = 1.0f;      
-    public float Distance = 5.0f;   
-    public bool IsMovingRight = true; 
+
+    public float Speed = 1.0f;
+    public float Distance = 5.0f;
+    public bool IsMovingRight = true;
     private Vector2 StartPos;
     private Rigidbody2D rb;
 
-    public PlayerMovement playerMovement;
-
     public GameObject prefabGota;
-    public float intervalo = 1.5f; //Tiempo entre gotas
+    public float intervalo = 1.5f;
 
-    private Coroutine lluviaActiva; //Controlar corrutina de la lluvia
+
+    private Coroutine lluviaActiva;
+    public bool IsRaining { get; private set; }
 
     void Start()
     {
         StartPos = transform.position;
         rb = GetComponent<Rigidbody2D>();
-
-        //Por si no encuentra el componente PlayerMovement, le metemos el script desde el player
-        if (playerMovement == null)
-        {
-            playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
-        }
     }
 
     void FixedUpdate()
     {
-        //Mover la nube hacia la izquierda o derecha
+        //Movimiento horizontal de la nube
         float direction = IsMovingRight ? 1.0f : -1.0f;
         Vector2 move = new Vector2(direction * Speed * Time.fixedDeltaTime, 0f);
         rb.MovePosition(rb.position + move);
 
-        //Cambiar dirección cuando llegamos a la distancia máxima
         float movedDistance = Vector2.Distance(rb.position, StartPos);
         if (movedDistance >= Distance)
         {
@@ -45,27 +38,31 @@ public class CloudSpawn : MonoBehaviour
         }
     }
 
-    void Update()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        //Leemos el numero de monedas
-        int countCoins = playerMovement.GetCoins;
-
-        //Comienza a llover
-        if (countCoins >= 7 && countCoins < 15)
+        if (collision.collider.CompareTag("Wall"))
         {
-            if (lluviaActiva == null)
-            {
-                //Inicia la corrutina para crear gotas
-                lluviaActiva = StartCoroutine(SpawnGota());
-            }
+            IsMovingRight = !IsMovingRight;
+            StartPos = rb.position;
         }
-        else
-        {   //Para de llover
-            if (lluviaActiva != null)
-            {
-                StopCoroutine(lluviaActiva);
-                lluviaActiva = null;
-            }
+    }
+
+    public void StartRain()
+    {
+        if (!IsRaining)
+        {
+            lluviaActiva = StartCoroutine(SpawnGota());
+            IsRaining = true;
+        }
+    }
+
+    public void StopRain()
+    {
+        if (lluviaActiva != null)
+        {
+            StopCoroutine(lluviaActiva);
+            lluviaActiva = null;
+            IsRaining = false;
         }
     }
 
@@ -73,9 +70,8 @@ public class CloudSpawn : MonoBehaviour
     {
         while (true)
         {
-            //Instanciamos gota en la posición de la nube
-            Instantiate(prefabGota, transform.position, Quaternion.identity);
-            //Espera el intervalo antes de generar la siguiente gota
+            Vector3 spawnPosition = transform.position + new Vector3(0, -0.1f, 0);
+            Instantiate(prefabGota, spawnPosition, Quaternion.identity);
             yield return new WaitForSeconds(intervalo);
         }
     }
