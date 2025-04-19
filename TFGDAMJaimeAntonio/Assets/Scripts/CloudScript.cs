@@ -1,40 +1,39 @@
 using System.Collections;
 using UnityEngine;
 
-public class CloudSpawn : MonoBehaviour
+public class CloudScript : MonoBehaviour
 {
 
     public float Speed = 1.0f;
     public float Distance = 5.0f;
     public bool IsMovingRight = true;
-    private Vector2 StartPos;
-    private Rigidbody2D rb;
+    private Vector2 StartPosition;
+    private Rigidbody2D RigidBody;
 
-    public GameObject prefabGota;
-    public float intervalo = 1.5f;
+    public GameObject Gout;
+    public float Interval = 1.5f;
 
 
-    private Coroutine lluviaActiva;
+    private Coroutine ActiveRain;
     public bool IsRaining { get; private set; }
 
     void Start()
     {
-        StartPos = transform.position;
-        rb = GetComponent<Rigidbody2D>();
+        StartPosition = transform.position;
+        RigidBody = GetComponent<Rigidbody2D>();
     }
 
     void FixedUpdate()
     {
-        //Movimiento horizontal de la nube
         float direction = IsMovingRight ? 1.0f : -1.0f;
         Vector2 move = new Vector2(direction * Speed * Time.fixedDeltaTime, 0f);
-        rb.MovePosition(rb.position + move);
+        RigidBody.MovePosition(RigidBody.position + move);
 
-        float movedDistance = Vector2.Distance(rb.position, StartPos);
+        float movedDistance = Vector2.Distance(RigidBody.position, StartPosition);
         if (movedDistance >= Distance)
         {
             IsMovingRight = !IsMovingRight;
-            StartPos = rb.position;
+            StartPosition = RigidBody.position;
         }
     }
 
@@ -43,7 +42,7 @@ public class CloudSpawn : MonoBehaviour
         if (collision.collider.CompareTag("Wall"))
         {
             IsMovingRight = !IsMovingRight;
-            StartPos = rb.position;
+            StartPosition = RigidBody.position;
         }
     }
 
@@ -51,28 +50,28 @@ public class CloudSpawn : MonoBehaviour
     {
         if (!IsRaining)
         {
-            lluviaActiva = StartCoroutine(SpawnGota());
+            ActiveRain = StartCoroutine(SpawnGout());
             IsRaining = true;
         }
     }
 
     public void StopRain()
     {
-        if (lluviaActiva != null)
+        if (ActiveRain != null)
         {
-            StopCoroutine(lluviaActiva);
-            lluviaActiva = null;
+            StopCoroutine(ActiveRain);
+            ActiveRain = null;
             IsRaining = false;
         }
     }
 
-    IEnumerator SpawnGota()
+    IEnumerator SpawnGout()
     {
         while (true)
         {
             Vector3 spawnPosition = transform.position + new Vector3(0, -0.1f, 0);
-            Instantiate(prefabGota, spawnPosition, Quaternion.identity);
-            yield return new WaitForSeconds(intervalo);
+            Instantiate(Gout, spawnPosition, Quaternion.identity);
+            yield return new WaitForSeconds(Interval);
         }
     }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3877520158628733117}
   - component: {fileID: 3578166133996862443}
   m_Layer: 0
-  m_Name: gota
+  m_Name: Gout
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

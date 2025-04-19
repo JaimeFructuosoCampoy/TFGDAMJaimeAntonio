@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class Gota : MonoBehaviour
+public class Gout : MonoBehaviour
 {
-    public float speed = 1.0f;
+    public float Speed = 1.0f;
 
     void Update()
     {
-        transform.Translate(Vector2.down * speed * Time.deltaTime);
+        transform.Translate(Vector2.down * Speed * Time.deltaTime);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

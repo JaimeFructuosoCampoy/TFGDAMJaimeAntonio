@@ -5,17 +5,35 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public TMP_Text SecondText;
+    public TMP_Text MinuteText;
+    public TMP_Text HourText;
     public TMP_Text GameOverText;
-    private int Points = 0;
-    public TMP_Text CountText;
+    private TimerScript Timer;
+    private int PointCount = 0;
+    public TMP_Text PointCountText;
+    private int Level = 1;
 
-    public CloudSpawn cloudSpawn;
-    public float startRainTime;
-    private float tiempoActual;
-    private bool rainActive = false;
+    private enum Cataclysms
+    {
+        CLOUD_RAIN, CLOUD_THUNDER, METEORITE, 
+    }
+
+    public CloudScript Cloud;
+    public float StartRainTime;
+    private float TiempoActual;
+    private bool RainActive = false;
+
+    private void Awake()
+    {
+        GameObject timerObject = new GameObject("TimerScript");
+        Timer = timerObject.AddComponent<TimerScript>();
+        Timer.SetTextReferences(SecondText, MinuteText, HourText);
+    }
+
     void Start()
     {
-        tiempoActual = 0f;
+        TiempoActual = 0f;
     }
 
     // Update is called once per frame
@@ -27,15 +45,21 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            UpdateCount();
-            if (!rainActive)
+            if (Timer.CheckUpdateCounts() == true)
             {
-                tiempoActual += Time.deltaTime;
+                UpdatePointCount();
+                Timer.VerifyDataIntegrity();
+                Timer.UpdateTime();
+            }
 
-                if (tiempoActual >= startRainTime)
+            if (!RainActive)
+            {
+                TiempoActual += Time.deltaTime;
+
+                if (TiempoActual >= StartRainTime)
                 {
-                    cloudSpawn.StartRain(); //Activa lluvia
-                    rainActive = true;
+                    Cloud.StartRain(); //Activa lluvia
+                    RainActive = true;
                 }
             }
         }
@@ -48,9 +72,20 @@ public class GameManager : MonoBehaviour
         GameOverText.gameObject.SetActive(true);
     }
 
-    private void UpdateCount()
+    private void UpdatePointCount()
     {
-        Points++;
-        CountText.SetText(Points.ToString());
+        PointCount++;
+        PointCountText.SetText(PointCount.ToString());
+    }
+
+    private void EvaluateRandomCataclysm()
+    {
+        int numeroTiempo = Random.Range(0, 6);
+
+    }
+
+    private void VerifyDataIntegrity()
+    {
+
     }
 }

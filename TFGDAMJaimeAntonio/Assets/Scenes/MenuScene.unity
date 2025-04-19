@@ -2496,7 +2496,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1568183361269617750, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_text
-      value: Sing In
+      value: Sign In
       objectReference: {fileID: 0}
     - target: {fileID: 1719477702901239218, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_Pivot.x

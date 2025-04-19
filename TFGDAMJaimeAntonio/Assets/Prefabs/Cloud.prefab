@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 8022227269203641346}
   - component: {fileID: 7330274892183330319}
   m_Layer: 0
-  m_Name: CloudSpawn
+  m_Name: Cloud
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -205,8 +205,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 500d49f71c088094b8fe3a18bb45d992, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabGota: {fileID: 0}
-  intervalo: 1.5
+  Speed: 1
+  Distance: 5
+  IsMovingRight: 1
+  Gout: {fileID: 1531468959096057065, guid: 7ea93f6f60bfbd249b4dfe9ae9cea82b, type: 3}
+  Interval: 0.2
 --- !u!1 &4054180281172425812
 GameObject:
   m_ObjectHideFlags: 0
