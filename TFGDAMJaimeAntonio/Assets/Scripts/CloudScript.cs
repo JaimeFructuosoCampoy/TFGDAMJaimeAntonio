@@ -10,13 +10,6 @@ public class CloudScript : MonoBehaviour
     private Vector2 StartPosition;
     private Rigidbody2D RigidBody;
 
-    public GameObject Gout;
-    public float Interval = 1.5f;
-
-
-    private Coroutine ActiveRain;
-    public bool IsRaining { get; private set; }
-
     void Start()
     {
         StartPosition = transform.position;
@@ -45,33 +38,5 @@ public class CloudScript : MonoBehaviour
             StartPosition = RigidBody.position;
         }
     }
-
-    public void StartRain()
-    {
-        if (!IsRaining)
-        {
-            ActiveRain = StartCoroutine(SpawnGout());
-            IsRaining = true;
-        }
-    }
-
-    public void StopRain()
-    {
-        if (ActiveRain != null)
-        {
-            StopCoroutine(ActiveRain);
-            ActiveRain = null;
-            IsRaining = false;
-        }
-    }
-
-    IEnumerator SpawnGout()
-    {
-        while (true)
-        {
-            Vector3 spawnPosition = transform.position + new Vector3(0, -0.1f, 0);
-            Instantiate(Gout, spawnPosition, Quaternion.identity);
-            yield return new WaitForSeconds(Interval);
-        }
-    }
+   
 }

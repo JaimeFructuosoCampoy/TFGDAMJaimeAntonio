@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,20 +10,16 @@ public class GameManager : MonoBehaviour
     public TMP_Text MinuteText;
     public TMP_Text HourText;
     public TMP_Text GameOverText;
+    public TMP_Text PauseText;
     private TimerScript Timer;
     private int PointCount = 0;
     public TMP_Text PointCountText;
     private int Level = 1;
-
+    private bool IsPaused = false;
     private enum Cataclysms
     {
-        CLOUD_RAIN, CLOUD_THUNDER, METEORITE, 
+        CLOUD_RAIN, CLOUD_THUNDER, METEORITE,
     }
-
-    public CloudScript Cloud;
-    public float StartRainTime;
-    private float TiempoActual;
-    private bool RainActive = false;
 
     private void Awake()
     {
@@ -33,38 +30,35 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        TiempoActual = 0f;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (GlobalData.GameOver == true)
+        CheckPause();
+        if (GlobalData.GameOver || IsPaused)
         {
-            ShowGameOver();
+            if (GlobalData.GameOver)
+            {
+                ShowGameOver();
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    GlobalData.GameOver = false;
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                }
+            }
+            return;
         }
         else
         {
-            if (Timer.CheckUpdateCounts() == true)
+            if (Timer.CheckUpdateCounts())
             {
                 UpdatePointCount();
                 Timer.VerifyDataIntegrity();
                 Timer.UpdateTime();
             }
-
-            if (!RainActive)
-            {
-                TiempoActual += Time.deltaTime;
-
-                if (TiempoActual >= StartRainTime)
-                {
-                    Cloud.StartRain(); //Activa lluvia
-                    RainActive = true;
-                }
-            }
         }
-
-
     }
 
     private void ShowGameOver()
@@ -78,6 +72,13 @@ public class GameManager : MonoBehaviour
         PointCountText.SetText(PointCount.ToString());
     }
 
+    private void SwitchPause()
+    {
+        IsPaused = !IsPaused;
+        PauseText.gameObject.SetActive(IsPaused);
+        Time.timeScale = IsPaused ? 0f : 1f;
+    }
+
     private void EvaluateRandomCataclysm()
     {
         int numeroTiempo = Random.Range(0, 6);
@@ -88,4 +89,13 @@ public class GameManager : MonoBehaviour
     {
 
     }
+
+    private void CheckPause()
+    {
+        if (Input.GetKeyDown(KeyCode.P) && !GlobalData.GameOver)
+        {
+            SwitchPause();
+        }
+    }
+
 }

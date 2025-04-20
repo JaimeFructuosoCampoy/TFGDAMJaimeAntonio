@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerScript : MonoBehaviour
 {
     private bool CanJump;
     private Rigidbody2D Rb2D;
@@ -51,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
         {
             case "Ground":
             case "Wall":
+            case "Platform":
                 //var directionsAndWays = GlobalFunctions.DetectDirectionAndWay(collision);
                 //var directionAndWay = directionsAndWays[0];
                 //if (!directionAndWay.Item1 && !directionAndWay.Item2) //Si la colisión es por arriba
@@ -72,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
         {
             case "Ground":
             case "Wall":
+            case "Platform":
                 CanJump = false;
                 break;
         }

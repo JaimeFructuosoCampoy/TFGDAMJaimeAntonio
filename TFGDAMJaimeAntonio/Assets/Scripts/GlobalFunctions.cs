@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GlobalFunctions : MonoBehaviour
+public static class GlobalFunctions
 {
     public static List<Tuple<bool, bool>> DetectDirectionAndWay(Collision2D collision)
     {
@@ -39,5 +39,11 @@ public class GlobalFunctions : MonoBehaviour
         }
 
         return directionsAndWays;
+    }
+
+    public static IEnumerator DestroyObjectAfterSeconds(float seconds, GameObject target)
+    {
+        yield return new WaitForSeconds(seconds);
+        MonoBehaviour.Destroy(target);
     }
 }
