@@ -63,7 +63,10 @@ public class GoutSpawn : MonoBehaviour
         {
             Interval = Random.Range(MinIntervalValue, MaxIntervalValue);
             Vector3 spawnPosition = transform.position + new Vector3(0, -0.1f, 0);
-            Instantiate(Gout, spawnPosition, Quaternion.identity);
+            GameObject goutInstance = Instantiate(Gout, spawnPosition, Quaternion.identity);
+            goutInstance.transform.SetParent(transform);
+            Gout goutScript = goutInstance.GetComponent<Gout>();
+            goutScript.IsCloudGrandSon = true;
             yield return new WaitForSeconds(Interval);
         }
     }

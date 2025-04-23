@@ -16,9 +16,10 @@ public class GameManager : MonoBehaviour
     public TMP_Text PointCountText;
     private int Level = 1;
     private bool IsPaused = false;
+    public GameObject[] CataclysmsObjects;
     private enum Cataclysms
     {
-        CLOUD_RAIN, CLOUD_THUNDER, METEORITE,
+        CLOUD_RAIN, METEORITE, TSUNAMI
     }
 
     private void Awake()
@@ -30,7 +31,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-
+        StartCoroutine(WaitUntilCataclysm());
     }
 
     // Update is called once per frame
@@ -79,12 +80,6 @@ public class GameManager : MonoBehaviour
         Time.timeScale = IsPaused ? 0f : 1f;
     }
 
-    private void EvaluateRandomCataclysm()
-    {
-        int numeroTiempo = Random.Range(0, 6);
-
-    }
-
     private void VerifyDataIntegrity()
     {
 
@@ -98,4 +93,38 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    IEnumerator WaitUntilCataclysm()
+    {
+        while (true)
+        {
+            int time = Random.Range(5, 30);
+            Debug.Log("Se esperarán " + time + " segundos para ejecutar el siguiente cataclismo");
+            yield return new WaitForSeconds(time);
+            StartCoroutine(SelectAndStartCataclysm());
+        }
+    }
+
+    IEnumerator SelectAndStartCataclysm()
+    {
+        int cataclysm = Random.Range(0, 2);
+        Debug.Log("Se ha seleccionado el cataclismo " + (Cataclysms)cataclysm);
+        Vector3 vector = SelectUbication(cataclysm);
+        GameObject instance = Instantiate(CataclysmsObjects[cataclysm], vector, Quaternion.identity);
+        int secondsUntilDestroy = Random.Range(0, 30); //Hay que convertir estos valores en atributos
+        Debug.Log("El cataclismo " + (Cataclysms)cataclysm + " será destruido en " + secondsUntilDestroy);
+        yield return new WaitForSeconds(secondsUntilDestroy);
+        Destroy(instance);
+    }
+
+    private Vector3 SelectUbication(int cataclysm)
+    {
+        float y = Random.Range(-1f, 3f);
+        float x = 0f;
+        if (cataclysm != 2)
+        {
+            x = Random.Range(-4f, 4f);
+        }
+        Vector3 vector = new Vector3(x, y, 0f);
+        return vector;
+    }
 }

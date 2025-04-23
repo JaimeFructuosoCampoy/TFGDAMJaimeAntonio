@@ -3,7 +3,7 @@ using UnityEngine;
 public class Gout : MonoBehaviour
 {
     public float Speed = 1.0f;
-
+    public bool IsCloudGrandSon = false;
     void Update()
     {
         transform.Translate(Vector2.down * Speed * Time.deltaTime);
@@ -11,9 +11,30 @@ public class Gout : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Ground"))
+        string collisionName = collision.collider.tag;
+        switch (collisionName)
         {
-            Destroy(gameObject);
+            case "Ground":
+            case "Wall":
+            case "Enemy":
+                if (collision.collider.transform.parent != null && collision.collider.transform.parent.parent != null)
+                {
+                    if (transform.parent.parent != collision.collider.transform.parent.parent)
+                    {
+                        Destroy(gameObject);
+                    }
+                } 
+                else
+                {
+                    Destroy(gameObject);
+                }
+                break;
+
+            case "Platform":
+                if (transform.parent.parent != collision.collider.transform)
+                    Destroy(gameObject);
+                break;
         }
     }
+
 }
