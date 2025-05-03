@@ -7,9 +7,11 @@ public class EnemyMovement : MonoBehaviour
     public float Speed = 2f;
     private bool MovingRight = true;
     private Rigidbody2D RigidBody;
+    private SpriteRenderer Sprite;
 
     void Start()
     {
+        Sprite = GetComponent<SpriteRenderer>();
         RigidBody = GetComponent<Rigidbody2D>();
     }
 
@@ -22,15 +24,21 @@ public class EnemyMovement : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag.Equals("Wall"))
-        MovingRight = !MovingRight;
+            MovingRight = !MovingRight;
     }
 
     private void ComprobarDireccion()
     {
         if (MovingRight)
-            MoveDirection = 1f; //Movimiento hacia la derecha
+        {
+            Sprite.flipX = true;
+            MoveDirection = 1f;
+        }
         else
-            MoveDirection = -1f; //Movimiento hacia la izquierda
-        RigidBody.velocity = new Vector2(MoveDirection * Speed, RigidBody.velocity.y); //Mantenemos la velocidad en Y sin alterarla
+        {
+            Sprite.flipX = false;
+            MoveDirection = -1f;
+        }
+        RigidBody.velocity = new Vector2(MoveDirection * Speed, RigidBody.velocity.y);
     }
 }

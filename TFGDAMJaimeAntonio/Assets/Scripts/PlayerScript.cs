@@ -8,17 +8,20 @@ public class PlayerScript : MonoBehaviour
 {
     private bool CanJump;
     private Rigidbody2D Rb2D;
+    private SpriteRenderer Sprite;
     private float MovementSpeed = 3.5f;
     public float JumpSpeed = 5f;
     private int Coins = 0;
     public TMP_Text CoinsText;
-    // Start is called before the first frame update
+
+    // Start is called before the first frame update  
     void Start()
     {
         Rb2D = GetComponent<Rigidbody2D>();
+        Sprite = GetComponent<SpriteRenderer>(); // Obtiene la referencia al SpriteRenderer  
     }
 
-    // Update is called once per frame
+    // Update is called once per frame  
     void FixedUpdate()
     {
         gameObject.SetActive(!GlobalData.GameOver);
@@ -29,11 +32,19 @@ public class PlayerScript : MonoBehaviour
     private void CheckMovement()
     {
         if (Input.GetKey("right") || Input.GetKey("d"))
+        {
             Rb2D.velocity = new Vector2(MovementSpeed, Rb2D.velocity.y);
+            Sprite.flipX = true;  
+        }
         else if (Input.GetKey("left") || Input.GetKey("a"))
+        {
             Rb2D.velocity = new Vector2(-MovementSpeed, Rb2D.velocity.y);
+            Sprite.flipX = false;
+        }
         else
+        {
             Rb2D.velocity = new Vector2(0, Rb2D.velocity.y);
+        }
     }
 
     private void CheckJump()
@@ -52,12 +63,12 @@ public class PlayerScript : MonoBehaviour
             case "Ground":
             case "Wall":
             case "Platform":
-                //var directionsAndWays = GlobalFunctions.DetectDirectionAndWay(collision);
-                //var directionAndWay = directionsAndWays[0];
-                //if (!directionAndWay.Item1 && !directionAndWay.Item2) //Si la colisión es por arriba
-                //    CanJump = false;
-                //else if (!directionAndWay.Item1 || directionAndWay.Item2) //Si la colision es por abajo
-                //    CanJump = true;
+                //var directionsAndWays = GlobalFunctions.DetectDirectionAndWay(collision);  
+                //var directionAndWay = directionsAndWays[0];  
+                //if (!directionAndWay.Item1 && !directionAndWay.Item2) // Si la colisión es por arriba  
+                //    CanJump = false;  
+                //else if (!directionAndWay.Item1 || directionAndWay.Item2) // Si la colisión es por abajo  
+                //    CanJump = true;  
                 CanJump = true;
                 break;
             case "Enemy":
@@ -89,6 +100,9 @@ public class PlayerScript : MonoBehaviour
                 Coins++;
                 CoinsText.SetText(Coins.ToString());
                 break;
+            case "Enemy":
+                GlobalData.GameOver = true;
+                break;
         }
     }
 
@@ -96,5 +110,6 @@ public class PlayerScript : MonoBehaviour
     {
         get { return Coins; }
     }
+
 
 }

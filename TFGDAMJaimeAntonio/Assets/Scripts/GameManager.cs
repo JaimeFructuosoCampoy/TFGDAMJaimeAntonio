@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -16,7 +17,14 @@ public class GameManager : MonoBehaviour
     public TMP_Text PointCountText;
     private int Level = 1;
     private bool IsPaused = false;
+    public GameObject TsunamiLimit;
     public GameObject[] CataclysmsObjects;
+    private Dictionary<int, bool> IsRandomUbicationCataclysm;
+    public GameObject TsunamiStart;
+    public GameObject Player;
+    private float TsunamiSpeed = 0.25f;
+    private float TimeUntilNewCataclysm;
+    private bool CataclysmIsNotRandomUbicationEnded;
     private enum Cataclysms
     {
         CLOUD_RAIN, METEORITE, TSUNAMI
@@ -31,6 +39,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        CataclysmIsNotRandomUbicationEnded = true;
+        InitializeKeyValueUbication();
         StartCoroutine(WaitUntilCataclysm());
     }
 
@@ -97,34 +107,100 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            int time = Random.Range(5, 30);
-            Debug.Log("Se esperarán " + time + " segundos para ejecutar el siguiente cataclismo");
-            yield return new WaitForSeconds(time);
+            TimeUntilNewCataclysm = UnityEngine.Random.Range(5f, 30f);
+            Debug.Log("Se esperarán " + TimeUntilNewCataclysm + " segundos para ejecutar el siguiente cataclismo");
+            yield return new WaitForSeconds(TimeUntilNewCataclysm);
             StartCoroutine(SelectAndStartCataclysm());
         }
     }
 
     IEnumerator SelectAndStartCataclysm()
     {
-        int cataclysm = Random.Range(0, 2);
-        Debug.Log("Se ha seleccionado el cataclismo " + (Cataclysms)cataclysm);
-        Vector3 vector = SelectUbication(cataclysm);
-        GameObject instance = Instantiate(CataclysmsObjects[cataclysm], vector, Quaternion.identity);
-        int secondsUntilDestroy = Random.Range(0, 30); //Hay que convertir estos valores en atributos
-        Debug.Log("El cataclismo " + (Cataclysms)cataclysm + " será destruido en " + secondsUntilDestroy);
-        yield return new WaitForSeconds(secondsUntilDestroy);
-        Destroy(instance);
+        int cataclysm = UnityEngine.Random.Range(0, 3);
+        if (CataclysmIsNotRandomUbicationEnded)
+        {
+            Debug.Log("Se ha seleccionado el cataclismo " + (Cataclysms)cataclysm);
+            Vector3? v = SelectUbication(cataclysm);
+            if (v.HasValue)
+            {
+                GameObject instance = Instantiate(CataclysmsObjects[cataclysm], (Vector3)v, Quaternion.identity);
+                int secondsUntilDestroy = UnityEngine.Random.Range(0, 30); //Hay que convertir estos valores en atributos
+                Debug.Log("El cataclismo " + (Cataclysms)cataclysm + " será destruido en " + secondsUntilDestroy);
+                yield return new WaitForSeconds(secondsUntilDestroy);
+                Destroy(instance);
+            }
+            else
+            {
+                switch (cataclysm)
+                {
+                    case 2:
+                        StartCoroutine(ExecuteTsunamiCataclysm());
+                        break;
+                }
+            }
+        }
     }
 
-    private Vector3 SelectUbication(int cataclysm)
+    private Vector3? SelectUbication(int cataclysm)
     {
-        float y = Random.Range(-1f, 3f);
-        float x = 0f;
-        if (cataclysm != 2)
+        if (IsRandomUbicationCataclysm[cataclysm])
         {
-            x = Random.Range(-4f, 4f);
+            float y = UnityEngine.Random.Range(-1f, 3f);
+            float x = UnityEngine.Random.Range(-4f, 4f);
+            Vector3 vector = new Vector3(x, y, 0f);
+            return vector;
         }
-        Vector3 vector = new Vector3(x, y, 0f);
-        return vector;
+        return null;
     }
+
+    private void InitializeKeyValueUbication()
+    {
+        IsRandomUbicationCataclysm = new Dictionary<int, bool>();
+        IsRandomUbicationCataclysm.Add(0, true);
+        IsRandomUbicationCataclysm.Add(1, true);
+        IsRandomUbicationCataclysm.Add(2, false);
+    }
+
+    IEnumerator ExecuteTsunamiCataclysm()
+    {
+        CataclysmIsNotRandomUbicationEnded = false;
+        TsunamiLimit.transform.parent = null;
+        Vector3 tsunamiLimitPosition = TsunamiLimit.transform.position;
+        Transform tsunamiTransform = CataclysmsObjects[2].transform;
+
+        Vector3 tsunamiStartPosition = TsunamiStart.transform.position;
+
+        while (tsunamiTransform.position.y != tsunamiLimitPosition.y)
+        {
+            tsunamiTransform.position = Vector3.MoveTowards(
+                tsunamiTransform.position,
+                new Vector3(tsunamiTransform.position.x, tsunamiLimitPosition.y, tsunamiTransform.position.z),
+                TsunamiSpeed * Time.deltaTime
+            );
+            Debug.Log(tsunamiTransform.position.y - tsunamiLimitPosition.y);
+            yield return new WaitForEndOfFrame(); // espera al siguiente frame
+        }
+        
+        Debug.Log("Se ha llegado a la posición del tsunami");
+
+        yield return new WaitForSeconds(5f);
+
+        Debug.Log("Se ha comenzado a mover el tsunami hacia la posición inicial");
+
+        while (tsunamiTransform.position.y != tsunamiStartPosition.y)
+        {
+            tsunamiTransform.position = Vector3.MoveTowards(
+                tsunamiTransform.position,
+                tsunamiStartPosition,
+                TsunamiSpeed * Time.deltaTime
+            );
+            Debug.Log(tsunamiTransform.position.y - tsunamiStartPosition.y);
+            yield return new WaitForEndOfFrame(); // espera al siguiente frame
+        }
+        
+        TsunamiLimit.transform.parent = Player.transform;
+        TsunamiLimit.transform.position = new Vector3(0, Player.transform.position.y + 1f, 0);
+        CataclysmIsNotRandomUbicationEnded = true;
+    }
+
 }
