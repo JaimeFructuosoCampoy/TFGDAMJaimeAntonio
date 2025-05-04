@@ -35,4 +35,9 @@ public class ButtonScript : MonoBehaviour
         LeanTween.scale(gameObject, new Vector3(1f, 1f, 1f), 0.2f).setEase(LeanTweenType.easeInOutSine);
     }
 
+    public void OpenLinkUserManual()
+    {
+        Application.OpenURL("https://drive.google.com/file/d/1aFLvwhuT0TQh1ZecA3QP-gR9uF4NTa-X/view?usp=sharing");
+    }
+
 }
