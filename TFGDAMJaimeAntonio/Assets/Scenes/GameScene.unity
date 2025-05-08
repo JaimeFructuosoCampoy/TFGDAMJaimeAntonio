@@ -12051,6 +12051,9 @@ MonoBehaviour:
   - {fileID: 1565438253}
   TsunamiStart: {fileID: 1247557069}
   Player: {fileID: 1439026169}
+  EnemyObjects:
+  - {fileID: 6623856739384615752, guid: fc43ec5fbe8a4d24a97ec95eae519da1, type: 3}
+  - {fileID: 502317421448321711, guid: 113dec418ee04384195bce16391540c1, type: 3}
 --- !u!4 &1069946546
 Transform:
   m_ObjectHideFlags: 0
