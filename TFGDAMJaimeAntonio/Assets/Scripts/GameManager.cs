@@ -25,9 +25,17 @@ public class GameManager : MonoBehaviour
     private float TsunamiSpeed = 0.25f;
     private float TimeUntilNewCataclysm;
     private bool CataclysmIsNotRandomUbicationEnded;
+    private Dictionary<int, bool> IsRandomUbicationEnemy;
+    public GameObject[] EnemyObjects;
+    private float TimeUntilNewEnemy;
     private enum Cataclysms
     {
-        CLOUD_RAIN, METEORITE, TSUNAMI
+        CLOUD_RAIN, METEORITE, TSUNAMI, SPIKES, BLACK_HOLE
+    }
+
+    private enum Enemies
+    {
+        BASIC, FLYING, SHOOT
     }
 
     private void Awake()
@@ -40,8 +48,10 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         CataclysmIsNotRandomUbicationEnded = true;
-        InitializeKeyValueUbication();
+        InitializeKeyValueCataclysmUbication();
+        InitializeKeyValueEnemyUbication();
         StartCoroutine(WaitUntilCataclysm());
+        StartCoroutine(WaitUntilEnemy());
     }
 
     // Update is called once per frame
@@ -113,6 +123,16 @@ public class GameManager : MonoBehaviour
             StartCoroutine(SelectAndStartCataclysm());
         }
     }
+    IEnumerator WaitUntilEnemy()
+    {
+        while (true)
+        {
+            TimeUntilNewEnemy = UnityEngine.Random.Range(3f, 15f);
+            Debug.Log("Se esperarán " + TimeUntilNewEnemy + " segundos para generar un nuevo enemigo");
+            yield return new WaitForSeconds(TimeUntilNewEnemy);
+            StartCoroutine(SelectAndSpawnEnemy());
+        }
+    }
 
     IEnumerator SelectAndStartCataclysm()
     {
@@ -120,7 +140,7 @@ public class GameManager : MonoBehaviour
         if (CataclysmIsNotRandomUbicationEnded)
         {
             Debug.Log("Se ha seleccionado el cataclismo " + (Cataclysms)cataclysm);
-            Vector3? v = SelectUbication(cataclysm);
+            Vector3? v = SelectCataclysmUbication(cataclysm);
             if (v.HasValue)
             {
                 GameObject instance = Instantiate(CataclysmsObjects[cataclysm], (Vector3)v, Quaternion.identity);
@@ -141,7 +161,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private Vector3? SelectUbication(int cataclysm)
+    IEnumerator SelectAndSpawnEnemy()
+    {
+        int enemyType = UnityEngine.Random.Range(0, EnemyObjects.Length);
+        Debug.Log("Se ha seleccionado el enemigo " + (Enemies)enemyType);
+        Vector3? spawnPosition = SelectEnemyUbication(enemyType);
+        if (spawnPosition.HasValue)
+        {
+            GameObject instance = Instantiate(EnemyObjects[enemyType], (Vector3)spawnPosition, Quaternion.identity);
+            int secondsUntilDestroy = UnityEngine.Random.Range(10, 60);
+            Debug.Log("El enemigo " + (Enemies)enemyType + " será destruido en " + secondsUntilDestroy + " segundos");
+            yield return new WaitForSeconds(secondsUntilDestroy);
+            Destroy(instance);
+        }
+    }
+
+    private Vector3? SelectCataclysmUbication(int cataclysm)
     {
         if (IsRandomUbicationCataclysm[cataclysm])
         {
@@ -153,12 +188,31 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    private void InitializeKeyValueUbication()
+    private Vector3? SelectEnemyUbication(int enemyType)
+    {
+        if (IsRandomUbicationEnemy[enemyType])
+        {
+            float y = UnityEngine.Random.Range(-1f, 3f);
+            float x = UnityEngine.Random.Range(-4f, 4f);
+            Vector3 vector = new Vector3(x, y, 0f);
+            return vector;
+        }
+        return null;
+    }
+
+    private void InitializeKeyValueCataclysmUbication()
     {
         IsRandomUbicationCataclysm = new Dictionary<int, bool>();
         IsRandomUbicationCataclysm.Add(0, true);
         IsRandomUbicationCataclysm.Add(1, true);
         IsRandomUbicationCataclysm.Add(2, false);
+    }
+
+    private void InitializeKeyValueEnemyUbication()
+    {
+        IsRandomUbicationEnemy = new Dictionary<int, bool>();
+        IsRandomUbicationEnemy.Add(0, true); // BASIC  
+        IsRandomUbicationEnemy.Add(1, true); // FLYING  
     }
 
     IEnumerator ExecuteTsunamiCataclysm()
@@ -202,5 +256,4 @@ public class GameManager : MonoBehaviour
         TsunamiLimit.transform.position = new Vector3(0, Player.transform.position.y + 1f, 0);
         CataclysmIsNotRandomUbicationEnded = true;
     }
-
 }
