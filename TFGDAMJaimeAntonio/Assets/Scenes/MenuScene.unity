@@ -4965,9 +4965,9 @@ MonoBehaviour:
   LoggedInOptions: {fileID: 1498112830}
   LoggedOutOptions: {fileID: 1725519490}
   PopUpLenguage: {fileID: 746394023}
-  NameText: {fileID: 0}
-  PointText: {fileID: 0}
-  CoinText: {fileID: 0}
+  NameText: {fileID: 679149448}
+  PointText: {fileID: 1055915716}
+  CoinText: {fileID: 202357248}
 --- !u!4 &1730106731
 Transform:
   m_ObjectHideFlags: 0
@@ -5139,7 +5139,6 @@ RectTransform:
   - {fileID: 1795116791}
   - {fileID: 1172735733}
   - {fileID: 1683944599}
-  - {fileID: 1207127288}
   m_Father: {fileID: 1664246434}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
