@@ -8,21 +8,33 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     public TMP_Text TitleText;
-
-    //PopUP Lenguage
+    public GameObject LoggedInOptions;
+    public GameObject LoggedOutOptions;
     public GameObject PopUpLenguage;
     private bool isPopUpActive = false;
+    public TMP_Text NameText;
+    public TMP_Text PointText;
+    public TMP_Text CoinText;
 
     // Start is called before the first frame update
     void Start()
     {
-        AnimateTitle();
+        if (SceneManager.GetActiveScene().name != "MenuScene")
+        {
+            Destroy(this);
+        }
     }
-
     // Update is called once per frame
     void Update()
     {
-        
+        LoggedInOptions.SetActive(GlobalData.PlayerLoggedIn);
+        LoggedOutOptions.SetActive(!GlobalData.PlayerLoggedIn);
+        if (GlobalData.PlayerLoggedIn)
+        {
+            NameText.text = PlayerLoggedIn.FriendlyName;
+            PointText.text = PlayerLoggedIn.Points.ToString();
+            CoinText.text = PlayerLoggedIn.Coins.ToString();
+        }
     }
 
     private void AnimateTitle()

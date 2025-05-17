@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator SelectAndStartCataclysm()
     {
-        int cataclysm = UnityEngine.Random.Range(0, 3);
+        int cataclysm = 2; /*UnityEngine.Random.Range(0, 3);*/
         if (CataclysmIsNotRandomUbicationEnded)
         {
             Debug.Log("Se ha seleccionado el cataclismo " + (Cataclysms)cataclysm);

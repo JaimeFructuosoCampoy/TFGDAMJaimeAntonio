@@ -7,8 +7,8 @@ using static SupabaseDAO;
 public class PlayerLoggedIn : MonoBehaviour
 {
     public static string PlayerId { get; set; }
-    public static string PlayerName { get; set; }
-    public static DateTime CreatedAt { get; set; }
+    public static string FriendlyName { get; set; }
+    public static string CreatedAt { get; set; }
     public static int Coins { get; set; }
     public static int Points { get; set; }
     public static int Diamonds { get; set; }
@@ -17,7 +17,7 @@ public class PlayerLoggedIn : MonoBehaviour
     public static void InitializeOrUpdatePlayerData(PlayerData data)
     {
         PlayerId = data.id;
-        PlayerName = data.player_friendly_name;
+        FriendlyName = data.friendly_name;
         CreatedAt = data.created_at;
         Coins = data.coins;
         Points = data.points;
@@ -28,8 +28,8 @@ public class PlayerLoggedIn : MonoBehaviour
     public static void ClearPlayerData()
     {
         PlayerId = null;
-        PlayerName = null;
-        CreatedAt = DateTime.MinValue;
+        FriendlyName = null;
+        CreatedAt = null;
         Coins = 0;
         Points = 0;
         Diamonds = 0;

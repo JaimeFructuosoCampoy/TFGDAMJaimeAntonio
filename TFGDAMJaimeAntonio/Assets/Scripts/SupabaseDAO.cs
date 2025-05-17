@@ -1,12 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
-using UnityEngine.LowLevel;
 using UnityEngine.SceneManagement;
+
 public class SupabaseDAO : MonoBehaviour
 {
     private static SupabaseDAO instance;
@@ -48,12 +47,6 @@ public class SupabaseDAO : MonoBehaviour
         StartCoroutine(LoginCoroutine(email, password));
     }
 
-    // Después de que el usuario se registre como usuario:
-    public async Task CreatePlayer(string playerName)
-    {
-
-    }
-
     IEnumerator LoginCoroutine(string email, string password)
     {
         string url = "https://bxjubueuyzobmpvdwefk.supabase.co/auth/v1/token?grant_type=password";
@@ -82,6 +75,47 @@ public class SupabaseDAO : MonoBehaviour
                 StoreTokens(response.access_token, response.refresh_token, response.expires_in);
                 Debug.Log(request.downloadHandler.text);
                 StartCoroutine(LoginPlayerCoroutine());
+            }
+            else
+            {
+                Debug.Log("Error: " + request.error + request.downloadHandler.text);
+            }
+        }
+    }
+
+    public void SignUp(string email, string password, string name)
+    {
+        StartCoroutine(SignUpCoroutine(email, password, name));
+    }
+
+    IEnumerator SignUpCoroutine(string email, string password, string userName)
+    {
+        string url = "https://bxjubueuyzobmpvdwefk.supabase.co/auth/v1/signup";
+
+        string jsonData = JsonConvert.SerializeObject
+        (new
+        {
+            email = email,
+            password = password,
+        }
+        );
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                var response = JsonConvert.DeserializeObject<SignUpResponse>(request.downloadHandler.text);
+
+                Debug.Log(request.downloadHandler.text);
+                StartCoroutine(SignUpLoginCoroutine(email, password, userName));
             }
             else
             {
@@ -150,44 +184,49 @@ public class SupabaseDAO : MonoBehaviour
             }
         }
     }
-    //public IEnumerator SavePlayerProgress(PlayerData data)
-    //{
-    //    // Verificar si el token ha expirado
-    //    if (IsTokenExpired())
-    //    {
-    //        Debug.Log("El token ha expirado. Intentando refrescar...");
-    //        yield return RefreshTokenFunction((success) =>
-    //        {
-    //            if (!success)
-    //            {
-    //                Debug.LogError("No se pudo refrescar el token. Mostrar UI de reconexión.");
-    //                yieldbreak;
-    //            }
-    //        });
-    //    }
 
-    //    // Continuar con la operación si el token es válido
-    //    string jsonData = JsonUtility.ToJson(data);
-    //    using (UnityWebRequest request = new UnityWebRequest("https://api.example.com/save-progress", "POST"))
-    //    {
-    //        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
-    //        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-    //        request.downloadHandler = new DownloadHandlerBuffer();
-    //        request.SetRequestHeader("Content-Type", "application/json");
-    //        request.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+    IEnumerator SignUpPlayerCoroutine(SignUpResponse response, string name)
+    {
+        using (UnityWebRequest webRequest = new UnityWebRequest(GlobalData.SUPABASE_DB_URL + "Player", "POST"))
+        {
+            var playerInsert = new
+            {
+                id = response.id,
+                friendly_name = name,
+                created_at = DateTime.Parse(response.created_at)
+                     .ToUniversalTime()
+                     .ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
+                coins = 0,
+                points = 0,
+                diamonds = 0
+            };
+            string jsonData = JsonConvert.SerializeObject(playerInsert);
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+            webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+            webRequest.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            webRequest.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("Prefer", "return=minimal");
 
-    //        yield return request.SendWebRequest();
+            yield return webRequest.SendWebRequest();
 
-    //        if (request.result == UnityWebRequest.Result.Success)
-    //        {
-    //            Debug.Log("Progreso guardado exitosamente.");
-    //        }
-    //        else
-    //        {
-    //            Debug.LogError($"Error al guardar el progreso: {request.error}");
-    //        }
-    //    }
-    //}
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                PlayerLoggedIn.InitializeOrUpdatePlayerData(
+                    new PlayerData(
+                        response.id, name, playerInsert.created_at, 0,0,0
+                        )
+                    );
+                GlobalData.PlayerLoggedIn = true;
+                SceneManager.LoadScene("MenuScene");
+            }
+            else
+            {
+                Debug.LogError("Error: " + webRequest.error);
+            }
+        }
+    }
 
     public IEnumerator RefreshTokenFunction(Action<bool> onComplete)
     {
@@ -220,30 +259,50 @@ public class SupabaseDAO : MonoBehaviour
             }
         }
     }
+    IEnumerator SignUpLoginCoroutine(string email, string password, string userName)
+    {
+        string url = "https://bxjubueuyzobmpvdwefk.supabase.co/auth/v1/token?grant_type=password";
 
-    //public IEnumerator SavePlayerProgress(PlayerData data)
-    //{
-    //    // Verificar token antes de cada operación sensible
-    //    if (IsTokenExpired())
-    //    {
-    //        yield return RefreshTokenFunction((success) => {
-    //            if (!success)
-    //            {
-    //                // Mostrar UI de reconexión
-    //            }
-    //        });
-    //    }
+        string jsonData = JsonConvert.SerializeObject(new
+        {
+            email = email,
+            password = password
+        });
 
-    //    // Continuar con la operación...
-    //    string jsonData = JsonUtility.ToJson(data);
-    //    using (UnityWebRequest request = /* Crear request API */)
-    //    {
-    //        request.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
-    //        yield return request.SendWebRequest();
-    //        // Manejar respuesta...
-    //    }
-    ////}
-    ///
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                var response = JsonConvert.DeserializeObject<AuthResponse>(request.downloadHandler.text);
+                StoreTokens(response.access_token, response.refresh_token, response.expires_in);
+
+                // Extrae el id y created_at del usuario
+                var user = response.user;
+                response.user.friendly_name = userName;
+                if (user == null)
+                {
+                    Debug.LogError("No se pudo obtener el usuario tras el login.");
+                    yield break;
+                }
+                SignUpResponse signUpResponse = new SignUpResponse(user.id, user.created_at);
+                // Ahora sí, inserta en la tabla Player
+                StartCoroutine(SignUpPlayerCoroutine(signUpResponse, userName));
+            }
+            else
+            {
+                Debug.Log("Error al hacer login tras signup: " + request.error + request.downloadHandler.text);
+            }
+        }
+    }
+
     [System.Serializable]
     private class AuthResponse
     {
@@ -251,13 +310,14 @@ public class SupabaseDAO : MonoBehaviour
         public string refresh_token;
         public int expires_in;
         public string token_type;
+        public PlayerData user;
     }
 
     public class PlayerData
     {
         public string id { get; set; }
-        public string player_friendly_name { get; set; }
-        public DateTime created_at { get; set; }
+        public string friendly_name { get; set; }
+        public string created_at { get; set; }
         public int coins { get; set; }
         public int points { get; set; }
         public int diamonds { get; set; }
@@ -268,23 +328,27 @@ public class SupabaseDAO : MonoBehaviour
             Inventory = new List<InventoryItem>();
         }
 
-        public PlayerData(string playerId, string playerFriendlyName, DateTime createdAt, int coins, int points, int diamonds)
+        public PlayerData(string playerId, string playerFriendlyName, string createdAt, int coins, int points, int diamonds)
         {
             id = playerId;
-            player_friendly_name = playerFriendlyName;
+            friendly_name = playerFriendlyName;
             created_at = createdAt;
             this.coins = coins;
             this.points = points;
             this.diamonds = diamonds;
+        }
+
+        public void CreateInventory()
+        {
             Inventory = new List<InventoryItem>();
         }
 
-        public void AddToInventory(string itemId, float cost, DateTime? timestamp = null)
+        public void AddToInventory(string itemId, float cost, string? timestamp = null)
         {
             Inventory.Add(new InventoryItem
             {
                 ItemId = itemId,
-                CreatedAt = timestamp ?? DateTime.Now,
+                CreatedAt = timestamp ?? DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
                 Cost = cost
             });
         }
@@ -304,7 +368,7 @@ public class SupabaseDAO : MonoBehaviour
             return new Dictionary<string, object>
         {
             { "player_id", id },
-            { "created_at", created_at.ToString("o") },
+            { "created_at", DateTime.Parse(created_at).ToString("yyyy-MM-ddTHH:mm:ss.fffZ") },
             { "coins", coins },
             { "points", points },
             { "diamonds", diamonds },
@@ -317,7 +381,19 @@ public class SupabaseDAO : MonoBehaviour
     public class InventoryItem
     {
         public string ItemId { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; }
         public float Cost { get; set; }
+    }
+
+    public class SignUpResponse
+    {
+        public string id;
+        public string created_at;
+
+        public SignUpResponse(string id, string created_at)
+        {
+            this.id = id;
+            this.created_at = created_at;
+        }
     }
 }
