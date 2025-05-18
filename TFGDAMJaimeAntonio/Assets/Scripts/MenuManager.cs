@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
@@ -57,7 +56,7 @@ public class MenuManager : MonoBehaviour
         {
             ClosePopUp();
         }
-        else 
+        else
         {
             OpenPopUp();
         }
@@ -67,7 +66,7 @@ public class MenuManager : MonoBehaviour
     /// <summary>
     /// Metodo para abrir el popup de seleccion de idioma
     /// </summary>
-    private void OpenPopUp() 
+    private void OpenPopUp()
     {
         PopUpLenguage.SetActive(true);
 
@@ -89,9 +88,6 @@ public class MenuManager : MonoBehaviour
         });
 
         isPopUpActive = false;
-    }   
-
-
-
+    }
 
 }

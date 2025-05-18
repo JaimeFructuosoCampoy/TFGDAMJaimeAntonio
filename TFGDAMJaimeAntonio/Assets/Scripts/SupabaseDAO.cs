@@ -11,8 +11,6 @@ public class SupabaseDAO : MonoBehaviour
     private static SupabaseDAO instance;
     public static SupabaseDAO Instance => instance;
 
-    private string EdgeFunctionUrl = "https://your-edge-function-url.supabase.co/function/v1/your-function-name";
-
     private string AccessToken;
     private string RefreshToken;
     private long TokenExpirationTime;
@@ -85,6 +83,7 @@ public class SupabaseDAO : MonoBehaviour
 
     public void SignUp(string email, string password, string name)
     {
+        Debug.Log("1. " + name);
         StartCoroutine(SignUpCoroutine(email, password, name));
     }
 
@@ -94,10 +93,10 @@ public class SupabaseDAO : MonoBehaviour
 
         string jsonData = JsonConvert.SerializeObject
         (new
-        {
-            email = email,
-            password = password,
-        }
+            {
+                email = email,
+                password = password,
+            }
         );
 
         using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
@@ -115,6 +114,7 @@ public class SupabaseDAO : MonoBehaviour
                 var response = JsonConvert.DeserializeObject<SignUpResponse>(request.downloadHandler.text);
 
                 Debug.Log(request.downloadHandler.text);
+                Debug.Log("2. " + userName);
                 StartCoroutine(SignUpLoginCoroutine(email, password, userName));
             }
             else
@@ -219,6 +219,7 @@ public class SupabaseDAO : MonoBehaviour
                         )
                     );
                 GlobalData.PlayerLoggedIn = true;
+                Debug.Log(name);
                 SceneManager.LoadScene("MenuScene");
             }
             else
@@ -294,6 +295,7 @@ public class SupabaseDAO : MonoBehaviour
                 }
                 SignUpResponse signUpResponse = new SignUpResponse(user.id, user.created_at);
                 // Ahora sí, inserta en la tabla Player
+                Debug.Log("3. " + userName);
                 StartCoroutine(SignUpPlayerCoroutine(signUpResponse, userName));
             }
             else
