@@ -1,40 +1,45 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System.Collections.Generic;
+using System;
 
 public class QuestionHandler : MonoBehaviour
 {
     public GeminiAPIHandler geminiHandler;
 
+    public TMP_Text questionText; // Texto donde se mostrará la pregunta generada.
+    public Button[] answerButtons; // Arreglo de botones para las opciones de respuesta (A, B, C, D).
+    public Button closeFeedbackButton; // Botón para cerrar el popup de feedback.
 
-    public TMP_Text questionText; 
-    public TMP_InputField answerInput; 
-    public Button sendAnswerButton; 
-    public Button nextQuestionButton; 
+    private string correctAnswer; // Almacena la respuesta correcta de la pregunta actual.
+    private bool awaitingAnswer = false; // Indica si se está esperando una respuesta de la API.
 
-    
-    private string correctAnswer; 
-    private bool awaitingAnswer = false; 
+    public GameObject popUpIA; // Popup que muestra la pregunta generada por la IA.
 
-    
-    public GameObject PopUpFeedback;
-    public TMP_Text popUpFeedbackText; 
-    private bool isPopUpActive = false; 
+    public GameObject PopUpFeedback; // Popup que muestra el feedback al usuario.
+    public TMP_Text popUpFeedbackText; // Texto dentro del popup para mostrar el feedback.
 
-    //Lista de temas para las preguntas
+    public event Action onPopupClosed; // Evento que se dispara cuando el popup se cierra.
+    public GameManager gameManager;
+
+    // Lista de temas específicos para las preguntas.
     private string[] topics = { "lluvia", "meteoritos", "tsunamis" };
-
-    //Historial de preguntas generadas para evitar repeticiones.
-    private HashSet<string> questionHistory = new HashSet<string>();
 
     void Start()
     {
-        sendAnswerButton.onClick.AddListener(OnSendAnswerClicked); 
+        // Configurar los listeners de los botones de respuesta.
+        for (int i = 0; i < answerButtons.Length; i++)
+        {
+            int index = i; // Capturar el índice del botón actual.
+            answerButtons[i].onClick.AddListener(() => OnAnswerButtonClicked(index));
+        }
 
-        nextQuestionButton.onClick.AddListener(AskNewQuestion); //Llama a AskNewQuestion
+        // Configurar el listener del botón de cerrar feedback.
+        closeFeedbackButton.onClick.AddListener(ClosePopUpIA);
 
-        //Solicitamos la primera pregunta al iniciar la escena.
+        OpenPopUpIA();
+
+        // Solicitar la primera pregunta al iniciar la escena.
         AskNewQuestion();
     }
 
@@ -45,25 +50,24 @@ public class QuestionHandler : MonoBehaviour
     {
         if (geminiHandler != null && questionText != null && !awaitingAnswer)
         {
-            //Ramdomizar un tema de la lista
-            string randomTopic = topics[Random.Range(0, topics.Length)];
+            // Seleccionar un tema aleatorio de la lista de temas.
+            string randomTopic = topics[UnityEngine.Random.Range(0, topics.Length)];
 
-            //Generar la consulta con el tema seleccionado.
+            // Generar la consulta con el tema seleccionado.
             string query = $"Hazme una pregunta sencilla menos de 80 caracteres y corta sobre {randomTopic} con cuatro opciones de respuesta. Formatea la pregunta incluyendo las opciones A, B, C y D. Indica claramente cuál es la respuesta correcta al final, precedida por 'Respuesta correcta:'.";
 
-            //Mientras se espera respuesta
+            // Mostrar un mensaje temporal mientras se espera la respuesta.
             questionText.text = "Pensando...";
-            awaitingAnswer = true;
+            awaitingAnswer = true; // Indicar que se está esperando una respuesta de la API.
 
-            //Enviarmos a la api.
+            // Enviar la consulta a la API.
             geminiHandler.SendQueryToGemini(query, HandleAIResponse);
 
-            //Limpiar el campo de entrada y cerrar el popup.
-            answerInput.text = "";
-            ClosePopUp();
-
-            //Habilitar el botón de send
-            sendAnswerButton.interactable = true;
+            // Deshabilitar los botones de respuesta mientras se espera la pregunta.
+            foreach (var button in answerButtons)
+            {
+                button.interactable = false;
+            }
         }
     }
 
@@ -71,104 +75,132 @@ public class QuestionHandler : MonoBehaviour
     /// Método para manejar la respuesta de la API.
     /// </summary>
     /// <param name="aiResponse"></param>
-   
     void HandleAIResponse(string aiResponse)
     {
-        string questionWithOptions = ""; //Almacena la pregunta con las opciones.
-        correctAnswer = ""; //Reinicia la respuesta correcta.
+        string questionWithOptions = ""; // Almacena la pregunta con las opciones.
+        correctAnswer = ""; // Reinicia la respuesta correcta.
 
-        //Dividir la respuesta de la API en la pregunta y la respuesta correcta.
+        // Dividir la respuesta de la API en la pregunta y la respuesta correcta.
         string[] parts = aiResponse.Split(new string[] { "Respuesta correcta:" }, System.StringSplitOptions.None);
 
         if (parts.Length == 2)
         {
-            questionWithOptions = parts[0].Trim(); //Extraer la pregunta.
-            correctAnswer = parts[1].Trim().ToUpper(); //Extraer y normalizar la respuesta correcta.
+            questionWithOptions = parts[0].Trim(); // Extraer la pregunta.
+            correctAnswer = parts[1].Trim().ToUpper(); // Extraer y normalizar la respuesta correcta.
 
-            //Verificar si la pregunta ya existe en el historial.
-            if (questionHistory.Contains(questionWithOptions))
+            // Mostrar la pregunta en la interfaz.
+            questionText.text = questionWithOptions;
+
+            // Habilitar los botones de respuesta.
+            foreach (var button in answerButtons)
             {
-                Debug.Log("Pregunta repetida, solicitando una nueva...");
-                awaitingAnswer = false; //Permitir solicitar otra pregunta.
-                AskNewQuestion(); //Solicitar una nueva pregunta.
-                return;
+                button.interactable = true;
             }
 
-            //Agregar la pregunta al historial y mostrarla.
-            questionHistory.Add(questionWithOptions);
-            questionText.text = questionWithOptions;
-            awaitingAnswer = false; //Indicar que ya no se está esperando una respuesta.
+            awaitingAnswer = false; // Indicar que ya no se está esperando una respuesta.
         }
         else
         {
-            //Manejar errores en la respuesta de la API.
+            // Manejar errores en la respuesta de la API.
             questionText.text = "Error al obtener la pregunta de la IA.";
             awaitingAnswer = false;
         }
     }
 
     /// <summary>
-    /// Método que se ejecuta al hacer clic en el botón de enviar respuesta.
+    /// Método que se ejecuta al hacer clic en un botón de respuesta.
     /// </summary>
-    void OnSendAnswerClicked()
+    /// <param name="buttonIndex">Índice del botón presionado.</param>
+    void OnAnswerButtonClicked(int buttonIndex)
     {
-        if (answerInput != null && popUpFeedbackText != null)
+        // Obtener la respuesta seleccionada por el usuario (A, B, C o D).
+        string userAnswer = ((char)('A' + buttonIndex)).ToString();
+        bool isCorrect = userAnswer == correctAnswer;
+
+        // Generar el feedback basado en la respuesta del usuario.
+        string feedback = $"Tu respuesta: {userAnswer}\nRespuesta correcta: {correctAnswer}";
+
+        if (userAnswer == correctAnswer)
         {
-            //Obtener la respuesta del usuario y normalizarla.
-            string userAnswer = answerInput.text.Trim().ToUpper();
+            feedback += "\n\n¡Correcto! La gravedad en esta partida será un poco menor por lo que..";
+        }
+        else
+        {
+            feedback += "\n\n¡Incorrecto! La gravedad en esta partida será un poco mayor por lo que..";
+        }
 
-            //Generar el feedback basado en la respuesta del usuario.
-            string feedback = $"Tu respuesta: {userAnswer}\nRespuesta correcta: {correctAnswer}";
+        //Mostrar el feedback en el popup.
+        popUpFeedbackText.text = feedback;
+        OpenPopUpFeedback();
 
-            if (userAnswer == correctAnswer && "ABCD".Contains(userAnswer))
-            {
-                feedback += "\n\n\n¡Correcto!";
-            }
-            else if ("ABCD".Contains(userAnswer))
-            {
-                feedback += "\n\n\n¡Incorrecto!";
-            }
-            else
-            {
-                feedback += "\nRespuesta inválida. Escribe A, B, C o D.";
-            }
+        // Deshabilitar los botones de respuesta.
+        foreach (var button in answerButtons)
+        {
+            button.interactable = false;
+        }
 
-            //Mostrar el feedback en el popup.
-            popUpFeedbackText.text = feedback;
-            OpenPopUp();
-
-            // Deshabilitar el botón de enviar respuesta y habilitar el de "Siguiente pregunta".
-            sendAnswerButton.interactable = false;
-            nextQuestionButton.gameObject.SetActive(true);
-
-            // Cerrar el popup automáticamente después de 2 segundos.
-            Invoke(nameof(ClosePopUp), 2f);
+        //Llamar directamente al GameManager
+        if (isCorrect)
+        {
+            gameManager.removeGravity();
+            Console.WriteLine("Masa del jugador reducida");
+        }
+        else
+        {
+            gameManager.addGravity();
+            Console.WriteLine("Masa del jugador aumentada");
         }
     }
 
     /// <summary>
     /// Método para abrir el popup.
     /// </summary>
-    private void OpenPopUp()
+    private void OpenPopUpFeedback()
     {
+        Debug.Log("Intentando abrir el popup de feedback."); // Depuración
         PopUpFeedback.SetActive(true);
 
-        PopUpFeedback.transform.localScale = new Vector3(0, 0, 0);
-        LeanTween.scale(PopUpFeedback, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
-
-        isPopUpActive = true;
+        PopUpFeedback.transform.localScale = new Vector3(0, 0, 0); // Reinicia la escala
+        LeanTween.scale(PopUpFeedback, new Vector3(1, 1, 1), 0.5f)
+            .setEaseOutBack()
+            .setIgnoreTimeScale(true); // Ignorar Time.timeScale
+        Debug.Log("Popup de feedback mostrado."); // Depuración
     }
+
+
 
     /// <summary>
     /// Método para cerrar el popup.
     /// </summary>
-    private void ClosePopUp()
+    private void ClosePopUpIA()
     {
-        LeanTween.scale(PopUpFeedback, new Vector3(0, 0, 0), 0.5f).setEaseInBack().setOnComplete(() =>
-        {
-            PopUpFeedback.SetActive(false);
-        });
+        Debug.Log("Intentando cerrar el popup principal (popUpIA)..."); // Depuración
 
-        isPopUpActive = false;
+        LeanTween.scale(popUpIA, new Vector3(0, 0, 0), 0.5f)
+            .setEaseInBack()
+            .setIgnoreTimeScale(true) // Ignorar Time.timeScale
+            .setOnComplete(() =>
+            {
+                Debug.Log("Popup principal (popUpIA) escalado a (0, 0, 0)."); // Depuración
+                popUpIA.SetActive(false); // Desactiva el popup principal
+                Debug.Log("Popup principal (popUpIA) desactivado."); // Depuración
+                onPopupClosed?.Invoke(); // Notifica al GameManager que el popup se ha cerrado
+                Debug.Log("Evento OnPopupClosed invocado."); // Depuración
+            });
+    }
+
+    private void OpenPopUpIA()
+    {
+        Debug.Log("Intentando abrir el popup principal (popUpIA)..."); // Depuración
+
+        // Reinicia la escala del popup a (0, 0, 0)
+        popUpIA.transform.localScale = new Vector3(0, 0, 0);
+        popUpIA.SetActive(true); // Asegúrate de que el popup esté activo
+
+        //Escala el popup a (1, 1, 1) con animación
+        LeanTween.scale(popUpIA, new Vector3(1, 1, 1), 1f)
+            .setEaseOutBack()
+            .setIgnoreTimeScale(true); // Ignorar Time.timeScale
+        Debug.Log("Popup principal (popUpIA) mostrado."); // Depuración
     }
 }

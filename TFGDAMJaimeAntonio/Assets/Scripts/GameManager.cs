@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
     private Dictionary<int, bool> IsRandomUbicationEnemy;
     public GameObject[] EnemyObjects;
     private float TimeUntilNewEnemy;
+
+    //Manager de IA
+    public QuestionHandler questionHandler;
     private enum Cataclysms
     {
         CLOUD_RAIN, METEORITE, TSUNAMI, SPIKES, BLACK_HOLE
@@ -47,11 +50,14 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 0f;//Congelamos para la pregunta
+
+        //el juego comienza caudno el popUp de la IA se cierra
+        questionHandler.onPopupClosed += StartGame;
+
         CataclysmIsNotRandomUbicationEnded = true;
         InitializeKeyValueCataclysmUbication();
         InitializeKeyValueEnemyUbication();
-        StartCoroutine(WaitUntilCataclysm());
-        StartCoroutine(WaitUntilEnemy());
     }
 
     // Update is called once per frame
@@ -255,5 +261,26 @@ public class GameManager : MonoBehaviour
         TsunamiLimit.transform.parent = Player.transform;
         TsunamiLimit.transform.position = new Vector3(0, Player.transform.position.y + 1f, 0);
         CataclysmIsNotRandomUbicationEnded = true;
+    }
+
+    /// <summary>
+    /// Método que se llama cuando el popup de la IA se cierra.
+    /// </summary>
+    private void StartGame()
+    {
+        //Reanudar el tiempo y comenzar las corrutinas del juego
+        Time.timeScale = 1f;
+        StartCoroutine(WaitUntilCataclysm());
+        StartCoroutine(WaitUntilEnemy());
+    }
+
+    public void addGravity() 
+    { 
+        Player.GetComponent<Rigidbody2D>().gravityScale = 1.2f;
+    }
+
+    public void removeGravity()
+    {
+        Player.GetComponent<Rigidbody2D>().gravityScale = 0.8f;
     }
 }

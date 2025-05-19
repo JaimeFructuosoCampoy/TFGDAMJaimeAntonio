@@ -6,7 +6,7 @@ public class GeminiAPIHandler : MonoBehaviour
 {
     //IMPORTANTE: La API Key no debe ser expuesta en el código fuente.
     [SerializeField]
-    private string apiKey = "AIzaSyDpUT5kFtd7h4LnksO9JRexG1izcwAzko0";
+    private string apiKey;
 
     private string geminiProModel = "gemini-2.0-flash-lite";
 
