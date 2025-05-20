@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public TMP_Text SecondText;
     public TMP_Text MinuteText;
     public TMP_Text HourText;
-    public TMP_Text GameOverText;
-    public TMP_Text PauseText;
+
+
     private TimerScript Timer;
     private int PointCount = 0;
     public TMP_Text PointCountText;
@@ -31,6 +32,19 @@ public class GameManager : MonoBehaviour
 
     //Manager de IA
     public QuestionHandler questionHandler;
+
+    //PAUSA
+    public Button ButtonPause;
+    public GameObject PauseObject;
+    public Button ButtonContinue;
+
+    //GameOver
+    public GameObject GameOverObject;
+    public Button ButtonPlayAgain;
+    private bool gameOverShown = false;
+
+
+
     private enum Cataclysms
     {
         CLOUD_RAIN, METEORITE, TSUNAMI, SPIKES, BLACK_HOLE
@@ -50,14 +64,24 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        Time.timeScale = 0f;//Congelamos para la pregunta
+        Time.timeScale = 0f; // Congelamos para la pregunta
 
-        //el juego comienza caudno el popUp de la IA se cierra
         questionHandler.onPopupClosed += StartGame;
 
         CataclysmIsNotRandomUbicationEnded = true;
         InitializeKeyValueCataclysmUbication();
         InitializeKeyValueEnemyUbication();
+
+        if (ButtonPause != null)
+            ButtonPause.onClick.AddListener(SwitchPause);
+        if (ButtonContinue != null)
+            ButtonContinue.onClick.AddListener(SwitchPause);
+        if (ButtonPlayAgain != null)
+            ButtonPlayAgain.onClick.AddListener(HideGameOverMenuAndRestart);
+
+        // Solo aseguramos la escala, NO desactivamos el objeto
+        if (GameOverObject != null)
+            GameOverObject.transform.localScale = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -68,7 +92,11 @@ public class GameManager : MonoBehaviour
         {
             if (GlobalData.GameOver)
             {
-                ShowGameOver();
+                if (!gameOverShown)
+                {
+                    ShowGameOverMenu();
+                    gameOverShown = true;
+                }
                 if (Input.GetKeyDown(KeyCode.R))
                 {
                     GlobalData.GameOver = false;
@@ -79,6 +107,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            //Reinicia el flag cuando el juego se reanuda
+            gameOverShown = false;
+
             if (Timer.CheckUpdateCounts())
             {
                 UpdatePointCount();
@@ -88,10 +119,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ShowGameOver()
+
+    private void ShowGameOverMenu()
     {
-        GameOverText.gameObject.SetActive(true);
+        LeanTween.cancel(GameOverObject); // Cancela cualquier animación previa pendiente
+        GameOverObject.transform.localScale = Vector3.zero;
+        GameOverObject.SetActive(true);
+        LeanTween.scale(GameOverObject, Vector3.one, 0.5f)
+            .setEaseOutBack()
+            .setIgnoreTimeScale(true);
+        Debug.Log("Mostrando GameOver");
     }
+
+    private void HideGameOverMenuAndRestart()
+    {
+        GlobalData.GameOver = false;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+
 
     private void UpdatePointCount()
     {
@@ -102,8 +148,16 @@ public class GameManager : MonoBehaviour
     private void SwitchPause()
     {
         IsPaused = !IsPaused;
-        PauseText.gameObject.SetActive(IsPaused);
-        Time.timeScale = IsPaused ? 0f : 1f;
+        if (IsPaused)
+        {
+            ShowPauseMenu();
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            HidePauseMenu();
+            Time.timeScale = 1f;
+        }
     }
 
     private void VerifyDataIntegrity()
@@ -282,5 +336,22 @@ public class GameManager : MonoBehaviour
     public void removeGravity()
     {
         Player.GetComponent<Rigidbody2D>().gravityScale = 0.8f;
+    }
+
+    private void ShowPauseMenu()
+    {
+        PauseObject.SetActive(true);
+        PauseObject.transform.localScale = new Vector3(0, 0, 0);
+        LeanTween.scale(PauseObject, new Vector3(1, 1, 1), 0.5f)
+            .setEaseOutBack()
+            .setIgnoreTimeScale(true);
+    }
+
+    private void HidePauseMenu()
+    {
+        LeanTween.scale(PauseObject, new Vector3(0, 0, 0), 0.5f)
+            .setEaseInBack()
+            .setIgnoreTimeScale(true)
+            .setOnComplete(() => PauseObject.SetActive(false));
     }
 }
