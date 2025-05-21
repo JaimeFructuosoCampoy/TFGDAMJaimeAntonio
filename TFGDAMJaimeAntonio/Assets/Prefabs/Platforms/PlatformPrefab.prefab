@@ -181,7 +181,7 @@ GameObject:
   - component: {fileID: 5732813008901841832}
   - component: {fileID: 5638030713155560452}
   m_Layer: 0
-  m_Name: normal
+  m_Name: PlatformPrefab
   m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
