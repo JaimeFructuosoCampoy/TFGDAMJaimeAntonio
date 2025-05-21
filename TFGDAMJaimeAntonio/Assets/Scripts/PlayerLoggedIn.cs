@@ -22,7 +22,11 @@ public class PlayerLoggedIn : MonoBehaviour
         Coins = data.coins;
         Points = data.points;
         Diamonds = data.diamonds;
-        Inventory = data.Inventory ?? new List<InventoryItem>();
+    }
+
+    public static void InitializeOrUpdateInventory(List<InventoryItem> inventory)
+    {
+        Inventory = inventory;
     }
 
     public static void ClearPlayerData()
