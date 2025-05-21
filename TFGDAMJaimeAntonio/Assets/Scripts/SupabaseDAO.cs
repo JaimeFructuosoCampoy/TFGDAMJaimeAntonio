@@ -93,10 +93,10 @@ public class SupabaseDAO : MonoBehaviour
 
         string jsonData = JsonConvert.SerializeObject
         (new
-            {
-                email = email,
-                password = password,
-            }
+        {
+            email = email,
+            password = password,
+        }
         );
 
         using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
@@ -169,6 +169,7 @@ public class SupabaseDAO : MonoBehaviour
                     {
                         Debug.Log($"Player ID: {playerData.id}, Coins: {playerData.coins}, Points: {playerData.points}");
                         PlayerLoggedIn.InitializeOrUpdatePlayerData(playerData);
+                        GetInventory();
                         GlobalData.PlayerLoggedIn = true;
                         SceneManager.LoadScene("MenuScene");
                     }
@@ -215,7 +216,7 @@ public class SupabaseDAO : MonoBehaviour
             {
                 PlayerLoggedIn.InitializeOrUpdatePlayerData(
                     new PlayerData(
-                        response.id, name, playerInsert.created_at, 0,0,0
+                        response.id, name, playerInsert.created_at, 0, 0, 0
                         )
                     );
                 GlobalData.PlayerLoggedIn = true;
@@ -304,6 +305,69 @@ public class SupabaseDAO : MonoBehaviour
             }
         }
     }
+    public void GetInventory()
+    {
+        StartCoroutine(GetInventoryIdCoroutine());
+    }
+
+    IEnumerator GetInventoryIdCoroutine()
+    {
+        string url = GlobalData.SUPABASE_DB_URL + "Inventory?select=item_id";
+
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            webRequest.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            webRequest.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Inventario recibido: " + webRequest.downloadHandler.text);
+                var inventoryList = JsonConvert.DeserializeObject<List<PlayerInventory>>(webRequest.downloadHandler.text);
+                if (inventoryList != null && inventoryList.Count > 0)
+                {
+                    StartCoroutine(GetInventoryItems(inventoryList));
+                }
+            }
+            else
+            {
+                Debug.LogError("Error al obtener el inventario: " + webRequest.error + " - " + webRequest.downloadHandler.text);
+            }
+        }
+    }
+
+    IEnumerator GetInventoryItems(List<PlayerInventory> inventoryList)
+    {
+        string url = "https://bxjubueuyzobmpvdwefk.supabase.co/rest/v1/Items?select=id,name,description,main_price&id=in.(";
+        foreach (var inventoryItem in inventoryList)
+        {
+            url += inventoryItem.item_id + ",";
+        }
+        url = url.TrimEnd(',') + ")";
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            webRequest.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            webRequest.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Items recibidos: " + webRequest.downloadHandler.text);
+                var itemsList = JsonConvert.DeserializeObject<List<InventoryItem>>(webRequest.downloadHandler.text);
+                if (itemsList != null && itemsList.Count > 0)
+                {
+                    PlayerLoggedIn.InitializeOrUpdateInventory(itemsList);
+                }
+            }
+            else
+            {
+                Debug.LogError("Error al obtener los items: " + webRequest.error + " - " + webRequest.downloadHandler.text);
+            }
+        }
+
+    }
 
     [System.Serializable]
     private class AuthResponse
@@ -340,51 +404,15 @@ public class SupabaseDAO : MonoBehaviour
             this.diamonds = diamonds;
         }
 
-        public void CreateInventory()
-        {
-            Inventory = new List<InventoryItem>();
-        }
-
-        public void AddToInventory(string itemId, float cost, string? timestamp = null)
-        {
-            Inventory.Add(new InventoryItem
-            {
-                ItemId = itemId,
-                CreatedAt = timestamp ?? DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
-                Cost = cost
-            });
-        }
-
-        public float GetInventoryValue()
-        {
-            float total = 0f;
-            foreach (var item in Inventory)
-            {
-                total += item.Cost;
-            }
-            return total;
-        }
-
-        public Dictionary<string, object> ToDictionary()
-        {
-            return new Dictionary<string, object>
-        {
-            { "player_id", id },
-            { "created_at", DateTime.Parse(created_at).ToString("yyyy-MM-ddTHH:mm:ss.fffZ") },
-            { "coins", coins },
-            { "points", points },
-            { "diamonds", diamonds },
-            { "inventory", Inventory },
-            { "inventory_value", GetInventoryValue() }
-        };
-        }
     }
 
     public class InventoryItem
     {
-        public string ItemId { get; set; }
-        public string CreatedAt { get; set; }
-        public float Cost { get; set; }
+        public string id { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
+        public string created_at { get; set; }
+        public int main_price { get; set; }
     }
 
     public class SignUpResponse
@@ -397,5 +425,12 @@ public class SupabaseDAO : MonoBehaviour
             this.id = id;
             this.created_at = created_at;
         }
+    }
+
+    public class PlayerInventory
+    {
+        public string player_id { get; set; }
+        public string item_id { get; set; }
+        public string created_at { get; set; }
     }
 }
