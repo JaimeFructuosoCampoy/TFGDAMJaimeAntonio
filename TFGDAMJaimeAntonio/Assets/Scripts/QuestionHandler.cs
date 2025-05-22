@@ -161,7 +161,7 @@ public class QuestionHandler : MonoBehaviour
         PopUpFeedback.SetActive(true);
 
         PopUpFeedback.transform.localScale = new Vector3(0, 0, 0); // Reinicia la escala
-        LeanTween.scale(PopUpFeedback, new Vector3(1, 1, 1), 0.5f)
+        LeanTween.scale(PopUpFeedback, new Vector3(1.2f, 1.2f, 1), 0.5f)
             .setEaseOutBack()
             .setIgnoreTimeScale(true); // Ignorar Time.timeScale
         Debug.Log("Popup de feedback mostrado."); // Depuración
@@ -198,7 +198,7 @@ public class QuestionHandler : MonoBehaviour
         popUpIA.SetActive(true); // Asegúrate de que el popup esté activo
 
         //Escala el popup a (1, 1, 1) con animación
-        LeanTween.scale(popUpIA, new Vector3(1, 1, 1), 1f)
+        LeanTween.scale(popUpIA, new Vector3(1.2f, 1.2f, 1), 1f)
             .setEaseOutBack()
             .setIgnoreTimeScale(true); // Ignorar Time.timeScale
         Debug.Log("Popup principal (popUpIA) mostrado."); // Depuración
