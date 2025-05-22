@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -14,12 +15,35 @@ public class PlayerScript : MonoBehaviour
     private int Coins = 0;
     public TMP_Text CoinsText;
 
+    // Referencias a los botones móviles
+    public GameObject MobileControls;
+    public Button ButtonLeft;
+    public Button ButtonRight;
+    public Button ButtonJump;
+
+    //Estados de los botones
+    private bool isLeftPressed = false;
+    private bool isRightPressed = false;
+    private bool isJumpPressed = false;
+
     // Start is called before the first frame update  
     void Start()
     {
         Rb2D = GetComponent<Rigidbody2D>();
-        Sprite = GetComponent<SpriteRenderer>(); // Obtiene la referencia al SpriteRenderer  
+        Sprite = GetComponent<SpriteRenderer>();
+
+        // Mostrar controles móviles solo en Android
+        //if (MobileControls != null)
+            //MobileControls.SetActive(Application.platform == RuntimePlatform.Android);
     }
+
+    // Métodos para EventTrigger
+    public void OnLeftDown() { isLeftPressed = true; }
+    public void OnLeftUp() { isLeftPressed = false; }
+    public void OnRightDown() { isRightPressed = true; }
+    public void OnRightUp() { isRightPressed = false; }
+    public void OnJumpDown() { isJumpPressed = true; }
+    public void OnJumpUp() { isJumpPressed = false; }
 
     // Update is called once per frame  
     void FixedUpdate()
@@ -31,27 +55,28 @@ public class PlayerScript : MonoBehaviour
 
     private void CheckMovement()
     {
-        if (Input.GetKey("right") || Input.GetKey("d"))
+        float move = 0;
+
+        // Teclado
+        if (Input.GetKey("right") || Input.GetKey("d") || isRightPressed)
         {
-            Rb2D.velocity = new Vector2(MovementSpeed, Rb2D.velocity.y);
-            Sprite.flipX = true;  
+            move = 1;
+            Sprite.flipX = true;
         }
-        else if (Input.GetKey("left") || Input.GetKey("a"))
+        else if (Input.GetKey("left") || Input.GetKey("a") || isLeftPressed)
         {
-            Rb2D.velocity = new Vector2(-MovementSpeed, Rb2D.velocity.y);
+            move = -1;
             Sprite.flipX = false;
         }
-        else
-        {
-            Rb2D.velocity = new Vector2(0, Rb2D.velocity.y);
-        }
+        Rb2D.velocity = new Vector2(move * MovementSpeed, Rb2D.velocity.y);
     }
 
     private void CheckJump()
     {
-        if ((Input.GetKey(KeyCode.Space) || Input.GetKey("up") || Input.GetKey("w")) && CanJump)
+        if ((Input.GetKey(KeyCode.Space) || Input.GetKey("up") || Input.GetKey("w") || isJumpPressed) && CanJump)
         {
             Rb2D.velocity = new Vector2(Rb2D.velocity.x, JumpSpeed);
+            isJumpPressed = false; // Para que solo salte una vez por toque
         }
     }
 
