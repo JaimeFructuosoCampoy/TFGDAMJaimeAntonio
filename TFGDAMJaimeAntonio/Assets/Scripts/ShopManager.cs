@@ -14,7 +14,6 @@ public class ShopManager : MonoBehaviour
     List<GameObject> ShopItemsGameObjects;
     public GameObject ShopItemPrefab;
     public GameObject ShopItemPrefabParent;
-    private Image ImageToSet;
 
 
     // Start is called before the first frame update
@@ -102,7 +101,14 @@ public class ShopManager : MonoBehaviour
                 if (childTransform != null)
                 {
                     TMP_Text childObject = childTransform.GetComponent<TMP_Text>();
-                    childObject.text = item.main_price.ToString();
+                    if (PlayerHasItem(item))
+                    {
+                        childObject.text = "Owned";
+                    }
+                    else
+                    {
+                        childObject.text = item.main_price.ToString();
+                    }
                 }
 
                 childTransform = ItemButton.transform.Find("SettingsButton");
@@ -140,5 +146,17 @@ public class ShopManager : MonoBehaviour
     {
         if (imageToSet != null && sprite != null)
             imageToSet.sprite = sprite;
+    }
+
+    private bool PlayerHasItem(SupabaseDAO.InventoryItem item)
+    {
+        foreach (var inventoryItem in PlayerLoggedIn.Inventory)
+        {
+            if (inventoryItem.id == item.id)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
