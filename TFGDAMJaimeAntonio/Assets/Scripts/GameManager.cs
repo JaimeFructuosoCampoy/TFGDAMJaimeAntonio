@@ -122,10 +122,10 @@ public class GameManager : MonoBehaviour
 
     private void ShowGameOverMenu()
     {
-        LeanTween.cancel(GameOverObject); // Cancela cualquier animación previa pendiente
+        LeanTween.cancel(GameOverObject); // Cancela cualquier animación previa pendiente  
         GameOverObject.transform.localScale = Vector3.zero;
         GameOverObject.SetActive(true);
-        LeanTween.scale(GameOverObject, Vector3.one, 0.5f)
+        LeanTween.scale(GameOverObject, new Vector3(1.2f, 1.2f, 1), 0.5f) // Corregido: Se agregó "new" antes de Vector3 y se usaron sufijos 'f' para los valores flotantes  
             .setEaseOutBack()
             .setIgnoreTimeScale(true);
         Debug.Log("Mostrando GameOver");
@@ -341,8 +341,7 @@ public class GameManager : MonoBehaviour
     private void ShowPauseMenu()
     {
         PauseObject.SetActive(true);
-        PauseObject.transform.localScale = new Vector3(0, 0, 0);
-        LeanTween.scale(PauseObject, new Vector3(1, 1, 1), 0.5f)
+        LeanTween.scale(PauseObject, new Vector3(1.2f, 1.2f, 1), 0.5f)
             .setEaseOutBack()
             .setIgnoreTimeScale(true);
     }
