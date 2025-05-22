@@ -368,6 +368,37 @@ public class SupabaseDAO : MonoBehaviour
         }
 
     }
+    public IEnumerator GetAllItems(Action<List<InventoryItem>> onResult)
+    {
+        yield return StartCoroutine(GetAllItemsCoroutine(onResult));
+    }
+
+    private IEnumerator GetAllItemsCoroutine(Action<List<InventoryItem>> onResult)
+    {
+        string url = GlobalData.SUPABASE_DB_URL + "Items?select=*";
+        List<InventoryItem> itemsList = null;
+
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            webRequest.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            webRequest.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Items recibidos: " + webRequest.downloadHandler.text);
+                itemsList = JsonConvert.DeserializeObject<List<InventoryItem>>(webRequest.downloadHandler.text);
+            }
+            else
+            {
+                Debug.LogError("Error al obtener los items: " + webRequest.error + " - " + webRequest.downloadHandler.text);
+            }
+        }
+
+        onResult?.Invoke(itemsList);
+    }
 
     [System.Serializable]
     private class AuthResponse
@@ -413,6 +444,9 @@ public class SupabaseDAO : MonoBehaviour
         public string description { get; set; }
         public string created_at { get; set; }
         public int main_price { get; set; }
+        public int number { get; set; }
+        public bool active { get; set; }
+        public string url_image { get; set; }
     }
 
     public class SignUpResponse
