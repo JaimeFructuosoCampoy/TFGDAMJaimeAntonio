@@ -14,7 +14,7 @@ public class ShopManager : MonoBehaviour
     List<GameObject> ShopItemsGameObjects;
     public GameObject ShopItemPrefab;
     public GameObject ShopItemPrefabParent;
-    private Image imageToSet;
+    private Image ImageToSet;
 
 
     // Start is called before the first frame update
@@ -110,14 +110,14 @@ public class ShopManager : MonoBehaviour
                 if (childTransform != null)
                 {
                     Image childObject = childTransform.GetComponent<Image>();
-                    StartCoroutine(LoadSpriteFromURL(item.url_image, SetImageSprite));
+                    StartCoroutine(LoadSpriteFromURL(item.url_image,childObject, SetImageSprite));
                 }
                 ShopItemsGameObjects.Add(ItemButton);
             }
         }
     }
 
-    private IEnumerator LoadSpriteFromURL(string url, System.Action<Sprite> onComplete)
+    private IEnumerator LoadSpriteFromURL(string url, Image image, System.Action<Sprite, Image> onComplete)
     {
         using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))
         {
@@ -127,17 +127,16 @@ public class ShopManager : MonoBehaviour
             {
                 Texture2D texture = DownloadHandlerTexture.GetContent(request);
                 Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                onComplete?.Invoke(sprite);
+                onComplete?.Invoke(sprite, image);
             }
             else
             {
                 Debug.LogError($"Error al cargar la imagen desde la URL: {request.error}");
-                onComplete?.Invoke(null);
             }
         }
     }
 
-    private void SetImageSprite(Sprite sprite)
+    private void SetImageSprite(Sprite sprite, Image imageToSet)
     {
         if (imageToSet != null && sprite != null)
             imageToSet.sprite = sprite;
