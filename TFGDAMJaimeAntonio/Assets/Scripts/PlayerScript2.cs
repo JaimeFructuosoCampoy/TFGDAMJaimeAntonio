@@ -1,184 +1,169 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerScript2 : MonoBehaviour
 {
+    private bool CanJump;
     private Rigidbody2D Rb2D;
     private SpriteRenderer Sprite;
-
     private float MovementSpeed = 3.5f;
     public float JumpSpeed = 5f;
-
-    private bool IsGrounded = false;
-    private bool IsTouchingWall = false;
-    private bool IsTouchingLeftWall = false;
-    private bool IsTouchingRightWall = false;
-
     private int Coins = 0;
     public TMP_Text CoinsText;
 
-    public Collider2D GroundCheck;
-    public Collider2D WallCheckLeft;
-    public Collider2D WallCheckRight;
+    // Referencias a los botones móviles
+    public GameObject MobileControls;
+    public Button ButtonLeft;
+    public Button ButtonRight;
+    public Button ButtonJump;
 
+    //Estados de los botones
+    private bool isLeftPressed = false;
+    private bool isRightPressed = false;
+    private bool isJumpPressed = false;
+
+    // Variables de estado
+    private bool touchingLeftWall = false;
+    private bool touchingRightWall = false;
+    private bool isGrounded = false;
+
+    // Start is called before the first frame update  
     void Start()
     {
         Rb2D = GetComponent<Rigidbody2D>();
         Sprite = GetComponent<SpriteRenderer>();
+
+        // Mostrar controles móviles solo en Android
+        //if (MobileControls != null)
+        //MobileControls.SetActive(Application.platform == RuntimePlatform.Android);
     }
 
+    // Métodos para EventTrigger
+    public void OnLeftDown() { isLeftPressed = true; }
+    public void OnLeftUp() { isLeftPressed = false; }
+    public void OnRightDown() { isRightPressed = true; }
+    public void OnRightUp() { isRightPressed = false; }
+    public void OnJumpDown() { isJumpPressed = true; }
+    public void OnJumpUp() { isJumpPressed = false; }
+
+    // Update is called once per frame  
     void FixedUpdate()
     {
         gameObject.SetActive(!GlobalData.GameOver);
         CheckMovement();
         CheckJump();
-        ApplyWallSlide();
     }
 
     private void CheckMovement()
     {
-        float moveX = 0;
+        float move = 0;
 
-        if (Input.GetKey("right") || Input.GetKey("d"))
-            moveX = 1;
-        else if (Input.GetKey("left") || Input.GetKey("a"))
-            moveX = -1;
-
-        // Si estás en el aire y tocando una pared en esa dirección, cancelamos movimiento
-        if (!IsGrounded && IsTouchingWall)
+        if ((Input.GetKey("right") || Input.GetKey("d") || isRightPressed) && !touchingRightWall)
         {
-            if ((moveX > 0 && IsTouchingRightWall) || (moveX < 0 && IsTouchingLeftWall))
-            {
-                moveX = 0;
-            }
-        }
-
-        Rb2D.velocity = new Vector2(moveX * MovementSpeed, Rb2D.velocity.y);
-
-        if (moveX > 0)
+            move = 1;
             Sprite.flipX = true;
-        else if (moveX < 0)
+        }
+        else if ((Input.GetKey("left") || Input.GetKey("a") || isLeftPressed) && !touchingLeftWall)
+        {
+            move = -1;
             Sprite.flipX = false;
+        }
+        Rb2D.velocity = new Vector2(move * MovementSpeed, Rb2D.velocity.y);
     }
 
     private void CheckJump()
     {
-        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown("up") || Input.GetKeyDown("w")))
+        if ((Input.GetKey(KeyCode.Space) || Input.GetKey("up") || Input.GetKey("w") || isJumpPressed) && CanJump)
         {
-            if (IsGrounded)
-            {
-                Rb2D.velocity = new Vector2(Rb2D.velocity.x, JumpSpeed);
-            }
-            else if (IsTouchingLeftWall)
-            {
-                Rb2D.velocity = new Vector2(5f, JumpSpeed); // Salta hacia la derecha
-            }
-            else if (IsTouchingRightWall)
-            {
-                Rb2D.velocity = new Vector2(-5f, JumpSpeed); // Salta hacia la izquierda
-            }
-        }
-    }
-
-    private void ApplyWallSlide()
-    {
-        //Si está tocando pared, no está en el suelo, y está cayendo
-        if (IsTouchingWall && !IsGrounded && Rb2D.velocity.y < 0)
-        {
-            Rb2D.velocity = new Vector2(Rb2D.velocity.x, -1.5f); // Ajusta velocidad vertical de caída
+            Rb2D.velocity = new Vector2(Rb2D.velocity.x, JumpSpeed);
+            isJumpPressed = false; // Para que solo salte una vez por toque
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        string tag = collision.gameObject.tag;
-
-        if (tag == "Ground" || tag == "Platform")
-            IsGrounded = true;
-
-        if (tag == "Wall")
-            IsTouchingWall = true;
-
-        if (tag == "Enemy")
-            GlobalData.GameOver = true;
+        string collisionGameobjectTag = collision.gameObject.tag;
+        switch (collisionGameobjectTag)
+        {
+            case "Ground":
+            case "Wall":
+            case "Platform":
+                //var directionsAndWays = GlobalFunctions.DetectDirectionAndWay(collision);  
+                //var directionAndWay = directionsAndWays[0];  
+                //if (!directionAndWay.Item1 && !directionAndWay.Item2) // Si la colisión es por arriba  
+                //    CanJump = false;  
+                //else if (!directionAndWay.Item1 || directionAndWay.Item2) // Si la colisión es por abajo  
+                //    CanJump = true;  
+                CanJump = true;
+                break;
+            case "Enemy":
+                GlobalData.GameOver = true;
+                break;
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        string tag = collision.gameObject.tag;
-
-        if (tag == "Ground" || tag == "Platform")
-            IsGrounded = false;
-
-        if (tag == "Wall")
-            IsTouchingWall = false;
+        string collisionGameobjectTag = collision.gameObject.tag;
+        switch (collisionGameobjectTag)
+        {
+            case "Ground":
+            case "Wall":
+            case "Platform":
+                CanJump = false;
+                break;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         string tag = collision.gameObject.tag;
-
-        // Detectamos suelo desde el collider GroundCheck
-        if (collision == GroundCheck)
+        switch (tag)
         {
-            if (tag == "Ground" || tag == "Platform")
-                IsGrounded = true;
-        }
-
-        // Detectamos pared izquierda
-        if (collision == WallCheckLeft)
-        {
-            if (tag == "Wall")
-                IsTouchingLeftWall = true;
-        }
-
-        // Detectamos pared derecha
-        if (collision == WallCheckRight)
-        {
-            if (tag == "Wall")
-                IsTouchingRightWall = true;
-        }
-
-        // Detectamos moneda y enemigo en el trigger general del jugador
-        if (tag == "Coin")
-        {
-            Destroy(collision.gameObject);
-            Coins++;
-            CoinsText.SetText(Coins.ToString());
-        }
-
-        if (tag == "Enemy")
-        {
-            GlobalData.GameOver = true;
+            case "WallCheckLeft":
+                touchingLeftWall = true;
+                break;
+            case "WallCheckRight":
+                touchingRightWall = true;
+                break;
+            case "Ground":
+                isGrounded = true;
+                break;
+            case "Coin":
+                Destroy(collision.gameObject);
+                Coins++;
+                CoinsText.SetText(Coins.ToString());
+                break;
+            case "Enemy":
+                GlobalData.GameOver = true;
+                break;
         }
     }
 
-        private void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         string tag = collision.gameObject.tag;
-
-        if (collision == GroundCheck)
+        switch (tag)
         {
-            if (tag == "Ground" || tag == "Platform")
-                IsGrounded = false;
-        }
-
-        if (collision == WallCheckLeft)
-        {
-            if (tag == "Wall")
-                IsTouchingLeftWall = false;
-        }
-
-        if (collision == WallCheckRight)
-        {
-            if (tag == "Wall")
-                IsTouchingRightWall = false;
+            case "WallCheckLeft":
+                touchingLeftWall = false;
+                break;
+            case "WallCheckRight":
+                touchingRightWall = false;
+                break;
+            case "Ground":
+                isGrounded = false;
+                break;
         }
     }
-
     public int GetCoins
     {
         get { return Coins; }
     }
+
+
 }
