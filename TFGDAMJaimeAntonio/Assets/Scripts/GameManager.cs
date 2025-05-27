@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
     public Button ButtonPlayAgain;
     private bool gameOverShown = false;
 
-
+    public GameObject backBlack;
 
     private enum Cataclysms
     {
@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 0f; // Congelamos para la pregunta
 
+  
         questionHandler.onPopupClosed += StartGame;
 
         CataclysmIsNotRandomUbicationEnded = true;
@@ -122,10 +123,11 @@ public class GameManager : MonoBehaviour
 
     private void ShowGameOverMenu()
     {
+        backBlack.SetActive(true);
         LeanTween.cancel(GameOverObject); // Cancela cualquier animación previa pendiente  
         GameOverObject.transform.localScale = Vector3.zero;
         GameOverObject.SetActive(true);
-        LeanTween.scale(GameOverObject, new Vector3(1.2f, 1.2f, 1), 0.5f) // Corregido: Se agregó "new" antes de Vector3 y se usaron sufijos 'f' para los valores flotantes  
+        LeanTween.scale(GameOverObject, new Vector3(1f, 1f, 1), 0.5f) // Corregido: Se agregó "new" antes de Vector3 y se usaron sufijos 'f' para los valores flotantes  
             .setEaseOutBack()
             .setIgnoreTimeScale(true);
         Debug.Log("Mostrando GameOver");
@@ -133,11 +135,10 @@ public class GameManager : MonoBehaviour
 
     private void HideGameOverMenuAndRestart()
     {
+        BackgroundQuit();
         GlobalData.GameOver = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-
-
 
     private void UpdatePointCount()
     {
@@ -340,8 +341,9 @@ public class GameManager : MonoBehaviour
 
     private void ShowPauseMenu()
     {
+        backBlack.SetActive(true);
         PauseObject.SetActive(true);
-        LeanTween.scale(PauseObject, new Vector3(1.2f, 1.2f, 1), 0.5f)
+        LeanTween.scale(PauseObject, new Vector3(1f, 1f, 1), 0.5f)
             .setEaseOutBack()
             .setIgnoreTimeScale(true);
     }
@@ -351,6 +353,15 @@ public class GameManager : MonoBehaviour
         LeanTween.scale(PauseObject, new Vector3(0, 0, 0), 0.5f)
             .setEaseInBack()
             .setIgnoreTimeScale(true)
-            .setOnComplete(() => PauseObject.SetActive(false));
+            .setOnComplete(() => {
+                PauseObject.SetActive(false);
+                BackgroundQuit();
+            });
     }
+
+    public void BackgroundQuit()
+    {
+        backBlack.SetActive(false);
+    }
+
 }
