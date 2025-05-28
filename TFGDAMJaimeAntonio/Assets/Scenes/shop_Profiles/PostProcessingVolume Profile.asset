@@ -17,8 +17,8 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   gradingMode:
-    overrideState: 0
-    value: 1
+    overrideState: 1
+    value: 0
   externalLut:
     overrideState: 0
     value: {fileID: 0}
@@ -65,7 +65,7 @@ MonoBehaviour:
     value: 0
   saturation:
     overrideState: 1
-    value: 20
+    value: 15
   brightness:
     overrideState: 0
     value: 0
@@ -74,7 +74,7 @@ MonoBehaviour:
     value: 0
   contrast:
     overrideState: 1
-    value: 10
+    value: 20
   mixerRedOutRedIn:
     overrideState: 0
     value: 100
@@ -1338,10 +1338,10 @@ MonoBehaviour:
     value: {x: 0.5, y: 0.5}
   intensity:
     overrideState: 1
-    value: 0.513
+    value: 0.2
   smoothness:
     overrideState: 1
-    value: 0.2
+    value: 0.3
   roundness:
     overrideState: 0
     value: 1
@@ -1373,10 +1373,10 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 5
+    value: 1.5
   threshold:
-    overrideState: 0
-    value: 1
+    overrideState: 1
+    value: 1.1
   softKnee:
     overrideState: 1
     value: 0.5
@@ -1384,8 +1384,8 @@ MonoBehaviour:
     overrideState: 0
     value: 65472
   diffusion:
-    overrideState: 0
-    value: 7
+    overrideState: 1
+    value: 5
   anamorphicRatio:
     overrideState: 0
     value: 0
@@ -1442,7 +1442,7 @@ MonoBehaviour:
     defaultState: 1
   intensity:
     overrideState: 1
-    value: 0.1
+    value: 0.05
   fastMode:
     overrideState: 0
     value: 0
@@ -1458,7 +1458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d65e486e4de6e5448a8fbb43dc8756a0, type: 3}
   m_Name: Grain
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1

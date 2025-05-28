@@ -9,6 +9,8 @@ TagManager:
   - Enemy
   - Coin
   - Platform
+  - WallCheckLeft
+  - WallCheckRight
   layers:
   - Default
   - TransparentFX

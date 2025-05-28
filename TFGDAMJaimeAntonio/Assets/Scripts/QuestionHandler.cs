@@ -35,7 +35,8 @@ public class QuestionHandler : MonoBehaviour
         }
 
         // Configurar el listener del botón de cerrar feedback.
-        closeFeedbackButton.onClick.AddListener(ClosePopUpIA);
+        closeFeedbackButton.onClick.AddListener(CloseAllPopUps);
+
 
         OpenPopUpIA();
 
@@ -122,11 +123,11 @@ public class QuestionHandler : MonoBehaviour
 
         if (userAnswer == correctAnswer)
         {
-            feedback += "\n\n¡Correcto! La gravedad en esta partida será un poco menor por lo que..";
+            feedback += "\n\n¡Correcto! La gravedad en esta partida será un poco menor por lo que..\n ¡¡SALTARAS MáS!!";
         }
         else
         {
-            feedback += "\n\n¡Incorrecto! La gravedad en esta partida será un poco mayor por lo que..";
+            feedback += "\n\n¡Incorrecto! La gravedad en esta partida sera un poco mayor por lo que..\n Saltaras menos..";
         }
 
         //Mostrar el feedback en el popup.
@@ -161,7 +162,7 @@ public class QuestionHandler : MonoBehaviour
         PopUpFeedback.SetActive(true);
 
         PopUpFeedback.transform.localScale = new Vector3(0, 0, 0); // Reinicia la escala
-        LeanTween.scale(PopUpFeedback, new Vector3(1.2f, 1.2f, 1), 0.5f)
+        LeanTween.scale(PopUpFeedback, new Vector3(1f, 1f, 1), 0.5f)
             .setEaseOutBack()
             .setIgnoreTimeScale(true); // Ignorar Time.timeScale
         Debug.Log("Popup de feedback mostrado."); // Depuración
@@ -174,18 +175,14 @@ public class QuestionHandler : MonoBehaviour
     /// </summary>
     private void ClosePopUpIA()
     {
-        Debug.Log("Intentando cerrar el popup principal (popUpIA)..."); // Depuración
-
         LeanTween.scale(popUpIA, new Vector3(0, 0, 0), 0.5f)
             .setEaseInBack()
-            .setIgnoreTimeScale(true) // Ignorar Time.timeScale
+            .setIgnoreTimeScale(true)
             .setOnComplete(() =>
             {
-                Debug.Log("Popup principal (popUpIA) escalado a (0, 0, 0)."); // Depuración
-                popUpIA.SetActive(false); // Desactiva el popup principal
-                Debug.Log("Popup principal (popUpIA) desactivado."); // Depuración
-                onPopupClosed?.Invoke(); // Notifica al GameManager que el popup se ha cerrado
-                Debug.Log("Evento OnPopupClosed invocado."); // Depuración
+                popUpIA.SetActive(false);
+                onPopupClosed?.Invoke();
+                gameManager.BackgroundQuit(); // <-- Aquí, después de la animación
             });
     }
 
@@ -198,9 +195,29 @@ public class QuestionHandler : MonoBehaviour
         popUpIA.SetActive(true); // Asegúrate de que el popup esté activo
 
         //Escala el popup a (1, 1, 1) con animación
-        LeanTween.scale(popUpIA, new Vector3(1.2f, 1.2f, 1), 1f)
+        LeanTween.scale(popUpIA, new Vector3(1f, 1f, 1), 1f)
             .setEaseOutBack()
             .setIgnoreTimeScale(true); // Ignorar Time.timeScale
         Debug.Log("Popup principal (popUpIA) mostrado."); // Depuración
+    }
+
+    private void ClosePopUpFeedback()
+    {
+        Debug.Log("Intentando cerrar el popup de feedback."); // Depuración
+
+        LeanTween.scale(PopUpFeedback, new Vector3(0, 0, 0), 0.5f)
+            .setEaseInBack()
+            .setIgnoreTimeScale(true)
+            .setOnComplete(() =>
+            {
+                PopUpFeedback.SetActive(false);
+                Debug.Log("Popup de feedback desactivado.");
+            });
+    }
+
+    private void CloseAllPopUps()
+    {
+        ClosePopUpFeedback();
+        ClosePopUpIA();
     }
 }
