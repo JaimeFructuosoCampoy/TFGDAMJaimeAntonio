@@ -31,6 +31,8 @@ public class PlayerScript2 : MonoBehaviour
     private bool touchingRightWall = false;
     private bool isGrounded = false;
 
+    public float wallSlideSpeed = -0.5f; // Velocidad de deslizamiento por la pared
+
     // Start is called before the first frame update  
     void Start()
     {
@@ -54,51 +56,82 @@ public class PlayerScript2 : MonoBehaviour
     void FixedUpdate()
     {
         gameObject.SetActive(!GlobalData.GameOver);
+
+        // DEBUG: Imprimir estado actual
+        Debug.Log($"Frame: touchingLeft={touchingLeftWall}, touchingRight={touchingRightWall}, velocityY={Rb2D.velocity.y}");
+
         CheckMovement();
         CheckJump();
+
+        if (touchingLeftWall || touchingRightWall) // Sin más condiciones
+        {
+            Debug.Log("ENTRANDO A WALL SLIDE - Aplicando velocidad constante");
+            Rb2D.velocity = new Vector2(Rb2D.velocity.x, wallSlideSpeed);
+            Debug.Log($"DESPUÉS de wall slide: velocityY={Rb2D.velocity.y}");
+        }
     }
 
     private void CheckMovement()
     {
         float move = 0;
 
-        if ((Input.GetKey("right") || Input.GetKey("d") || isRightPressed) && !touchingRightWall)
+        bool leftInput = Input.GetKey("left") || Input.GetKey("a") || isLeftPressed;
+        bool rightInput = Input.GetKey("right") || Input.GetKey("d") || isRightPressed;
+
+        // Si pulsa izquierda y está tocando la pared izquierda, anula movimiento
+        if (leftInput && touchingLeftWall)
+        {
+            Rb2D.velocity = new Vector2(0, Rb2D.velocity.y);
+            Sprite.flipX = false;
+            return;
+        }
+        // Si pulsa derecha y está tocando la pared derecha, anula movimiento
+        if (rightInput && touchingRightWall)
+        {
+            Rb2D.velocity = new Vector2(0, Rb2D.velocity.y);
+            Sprite.flipX = true;
+            return;
+        }
+
+        if (rightInput)
         {
             move = 1;
             Sprite.flipX = true;
         }
-        else if ((Input.GetKey("left") || Input.GetKey("a") || isLeftPressed) && !touchingLeftWall)
+        else if (leftInput)
         {
             move = -1;
             Sprite.flipX = false;
         }
+
         Rb2D.velocity = new Vector2(move * MovementSpeed, Rb2D.velocity.y);
     }
 
+
     private void CheckJump()
     {
-        if ((Input.GetKey(KeyCode.Space) || Input.GetKey("up") || Input.GetKey("w") || isJumpPressed) && CanJump)
+        bool jumpInput = Input.GetKey(KeyCode.Space) || Input.GetKey("up") || Input.GetKey("w") || isJumpPressed;
+
+        // Solo puede saltar si está en el suelo (CanJump) y NO tocando ninguna pared lateral
+        if (jumpInput && CanJump && isGrounded && !touchingLeftWall && !touchingRightWall)
         {
             Rb2D.velocity = new Vector2(Rb2D.velocity.x, JumpSpeed);
-            isJumpPressed = false; // Para que solo salte una vez por toque
+            isJumpPressed = false;
         }
     }
 
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        string collisionGameobjectTag = collision.gameObject.tag;
-        switch (collisionGameobjectTag)
+        string tag = collision.gameObject.tag;
+        switch (tag)
         {
             case "Ground":
-            case "Wall":
             case "Platform":
-                //var directionsAndWays = GlobalFunctions.DetectDirectionAndWay(collision);  
-                //var directionAndWay = directionsAndWays[0];  
-                //if (!directionAndWay.Item1 && !directionAndWay.Item2) // Si la colisión es por arriba  
-                //    CanJump = false;  
-                //else if (!directionAndWay.Item1 || directionAndWay.Item2) // Si la colisión es por abajo  
-                //    CanJump = true;  
                 CanJump = true;
+                break;
+            case "Wall":
+                // No activar CanJump aquí
                 break;
             case "Enemy":
                 GlobalData.GameOver = true;
@@ -108,11 +141,10 @@ public class PlayerScript2 : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        string collisionGameobjectTag = collision.gameObject.tag;
-        switch (collisionGameobjectTag)
+        string tag = collision.gameObject.tag;
+        switch (tag)
         {
             case "Ground":
-            case "Wall":
             case "Platform":
                 CanJump = false;
                 break;
@@ -122,6 +154,7 @@ public class PlayerScript2 : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         string tag = collision.gameObject.tag;
+        Debug.Log("Trigger ENTER: " + tag + " - " + collision.gameObject.name);
         switch (tag)
         {
             case "WallCheckLeft":
@@ -147,6 +180,7 @@ public class PlayerScript2 : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         string tag = collision.gameObject.tag;
+        Debug.Log("Trigger exit: " + tag);
         switch (tag)
         {
             case "WallCheckLeft":
