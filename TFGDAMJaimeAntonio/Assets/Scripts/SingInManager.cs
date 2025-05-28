@@ -13,7 +13,7 @@ public class SingInManager : MonoBehaviour
         string email = EmailInput.text;
         string password = PasswordInput.text;
         string username = NameInputField.text;
-        SupabaseDAO.Instance.SignUp(email, password, username);
+        SupabaseDao.Instance.SignUp(email, password, username);
     }
     // Start is called before the first frame update
     void Start()

@@ -12,7 +12,7 @@ public class LoginManagerScript : MonoBehaviour
     {
         string email = EmailInput.text;
         string password = PasswordInput.text;
-        SupabaseDAO.Instance.Login(email, password);
+        SupabaseDao.Instance.Login(email, password);
     }
     // Start is called before the first frame update
     void Start()

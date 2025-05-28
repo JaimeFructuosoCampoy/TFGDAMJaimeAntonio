@@ -10,7 +10,7 @@ public class ShopManager : MonoBehaviour
 
     public GameObject PopUpShop;
     private bool isPopUpActive = false;
-    List<SupabaseDAO.InventoryItem> AvaibleShopItems;
+    List<SupabaseDao.InventoryItem> AvaibleShopItems;
     List<GameObject> ShopItemsGameObjects;
     public GameObject ShopItemPrefab;
     public GameObject ShopItemPrefabParent;
@@ -20,7 +20,7 @@ public class ShopManager : MonoBehaviour
     void Start()
     {
         ShopItemsGameObjects = new List<GameObject>();
-        StartCoroutine(SupabaseDAO.Instance.GetAllItems(GetItems));
+        StartCoroutine(SupabaseDao.Instance.GetAllItems(GetItems));
     }
 
     // Update is called once per frame
@@ -82,7 +82,7 @@ public class ShopManager : MonoBehaviour
         //Logica para realizar compra
     }
 
-    private void GetItems(List<SupabaseDAO.InventoryItem> items)
+    private void GetItems(List<SupabaseDao.InventoryItem> items)
     {
         AvaibleShopItems = items;
         if (items != null)
@@ -90,6 +90,7 @@ public class ShopManager : MonoBehaviour
             foreach (var item in AvaibleShopItems)
             {
                 GameObject ItemButton = Instantiate(ShopItemPrefab, ShopItemPrefabParent.transform);
+                ItemButton.GetComponent<ShopButtonScript>().Initialize(this, item);
                 Transform childTransform = ItemButton.transform.Find("TextName");
                 if (childTransform != null)
                 {
@@ -111,12 +112,12 @@ public class ShopManager : MonoBehaviour
                     }
                 }
 
-                childTransform = ItemButton.transform.Find("SettingsButton");
+                childTransform = ItemButton.transform.Find("ShopButton");
                 childTransform = childTransform.transform.Find("ItemImage");
                 if (childTransform != null)
                 {
                     Image childObject = childTransform.GetComponent<Image>();
-                    StartCoroutine(LoadSpriteFromURL(item.url_image,childObject, SetImageSprite));
+                    StartCoroutine(LoadSpriteFromURL(item.url_image, childObject, SetImageSprite));
                 }
                 ShopItemsGameObjects.Add(ItemButton);
             }
@@ -142,13 +143,34 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+    public void ShowPopUpInfo(string itemSelectedName)
+    {
+        foreach (var shopGameObject in ShopItemsGameObjects)
+        {
+            if (shopGameObject.transform.Find("TextName").GetComponent<TMP_Text>().text == itemSelectedName)
+            {
+                Transform attribute = PopUpShop.transform.Find("ObjectSelected/ObjectSelectedImage");
+                Image image = attribute.GetComponent<Image>();
+                image.sprite = shopGameObject.transform.Find("ShopButton/ItemImage").GetComponent<Image>().sprite;
+
+                attribute = PopUpShop.transform.Find("ObjectSelected/TextName");
+                TMP_Text textName = attribute.GetComponent<TMP_Text>();
+                textName.text = shopGameObject.transform.Find("TextName").GetComponent<TMP_Text>().text;
+
+                attribute = PopUpShop.transform.Find("ObjectSelected/TextPrice");
+                TMP_Text textPrice = attribute.GetComponent<TMP_Text>();
+                textPrice.text = shopGameObject.transform.Find("TextPrice").GetComponent<TMP_Text>().text;
+                break;
+            }
+        }
+    }
     private void SetImageSprite(Sprite sprite, Image imageToSet)
     {
         if (imageToSet != null && sprite != null)
             imageToSet.sprite = sprite;
     }
 
-    private bool PlayerHasItem(SupabaseDAO.InventoryItem item)
+    private bool PlayerHasItem(SupabaseDao.InventoryItem item)
     {
         foreach (var inventoryItem in PlayerLoggedIn.Inventory)
         {
@@ -159,4 +181,17 @@ public class ShopManager : MonoBehaviour
         }
         return false;
     }
+
+    public void OnItemButtonClicked(SupabaseDao.InventoryItem item)
+    {
+        foreach (var shopGameObject in ShopItemsGameObjects)
+        {
+            if (shopGameObject.transform.Find("TextName").GetComponent<TMP_Text>().text == item.name)
+            {
+                ShowPopUpInfo(item.name);
+                break;
+            }
+        }
+    }
+
 }
