@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -15,16 +16,19 @@ public class ShopManager : MonoBehaviour
     List<GameObject> ShopItemsGameObjects;
     public GameObject ShopItemPrefab;
     public GameObject ShopItemPrefabParent;
+    private bool BuyingTransactionFinalized = false;
+    private int SelectedItemPrice;
+    private int SelectedUserCoins;
+    private bool CanBuyPopUp = false;
 
     void Awake()
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject); // Evita duplicados
+            Destroy(gameObject);
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Opcional: solo si quieres que persista entre escenas
     }
 
     // Start is called before the first frame update
@@ -174,6 +178,7 @@ public class ShopManager : MonoBehaviour
                 break;
             }
         }
+        StartCoroutine(CheckIfCanBuy());
         OpenPopUp();
     }
     private void SetImageSprite(Sprite sprite, Image imageToSet)
@@ -205,5 +210,31 @@ public class ShopManager : MonoBehaviour
             }
         }
     }
+    
+    IEnumerator CheckIfCanBuy()
+    {
+        Transform objectSelectedTransform = PopUpShop.transform.Find("ObjectSelected/TextName");
+        string itemName = objectSelectedTransform.GetComponent<TMP_Text>().text;
+
+        yield return StartCoroutine(SupabaseDao.Instance.GetPlayerCoins(SetPlayerCoins));
+        yield return StartCoroutine(SupabaseDao.Instance.GetItemPriceByName(itemName, SetItemPrice));
+        SetIfCanBuy(SelectedUserCoins, SelectedItemPrice);
+    }
+
+    private void SetItemPrice(int itemPrice)
+    {
+        SelectedItemPrice = itemPrice;
+    }
+
+    private void SetPlayerCoins(int userCoins)
+    {
+        SelectedUserCoins = userCoins;
+    }
+
+    private void SetIfCanBuy(int playerCoins, int itemPrice)
+    {
+        CanBuyPopUp = playerCoins >= itemPrice;
+    }
+
 
 }
