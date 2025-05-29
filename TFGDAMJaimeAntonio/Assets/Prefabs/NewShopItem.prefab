@@ -575,7 +575,7 @@ PrefabInstance:
       objectReference: {fileID: 9137369762969327001}
     - target: {fileID: 8430620500064109566, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnClick
+      value: OnPointerEnterButton
       objectReference: {fileID: 0}
     - target: {fileID: 8430620500064109566, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName

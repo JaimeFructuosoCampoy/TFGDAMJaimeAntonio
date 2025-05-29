@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
 {
+    public static ShopManager Instance { get; private set; }
 
     public GameObject PopUpShop;
     private bool isPopUpActive = false;
@@ -15,6 +16,16 @@ public class ShopManager : MonoBehaviour
     public GameObject ShopItemPrefab;
     public GameObject ShopItemPrefabParent;
 
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject); // Evita duplicados
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // Opcional: solo si quieres que persista entre escenas
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -163,6 +174,7 @@ public class ShopManager : MonoBehaviour
                 break;
             }
         }
+        OpenPopUp();
     }
     private void SetImageSprite(Sprite sprite, Image imageToSet)
     {
