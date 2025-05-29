@@ -10,16 +10,47 @@ public class ShopButtonScript : MonoBehaviour
     private SupabaseDao.InventoryItem Item;
     private Button ThisShopButton;
     private bool Initialized = false;
+    private bool PlayerHasThisItem = false;
 
     void Start()
     {
         ThisShopButton.onClick.RemoveAllListeners();
         ThisShopButton.onClick.AddListener(OnClick);
+        if (PlayerHasThisItem)
+        {
+            Transform itemImageTransform = ThisShopButton.transform.Find("ItemImage");
+            if (itemImageTransform != null)
+            {
+                Image itemImage = itemImageTransform.GetComponent<Image>();
+                if (itemImage != null)
+                {
+                    Color semiTransparentColor = itemImage.color;
+                    semiTransparentColor.a = 0.5f; // Cambiar a un valor semitransparente
+                    itemImage.color = semiTransparentColor;
+                }
+            }
+        }
+        else
+        {
+            Transform itemImageTransform = ThisShopButton.transform.Find("ItemImage");
+            if (itemImageTransform != null)
+            {
+                Image itemImage = itemImageTransform.GetComponent<Image>();
+                if (itemImage != null)
+                {
+                    Color opaqueColor = itemImage.color;
+                    opaqueColor.a = 1f;
+                    itemImage.color = opaqueColor;
+                }
+            }
+        }
     }
+
     void Update()
     {
         print("Soy el objeto: " + Item.name);
     }
+
     public void Initialize(ShopManager manager, SupabaseDao.InventoryItem item)
     {
         Manager = manager;
@@ -44,21 +75,29 @@ public class ShopButtonScript : MonoBehaviour
             return;
         }
         while (!Initialized){ }
-        Manager.OnItemButtonClicked(Item);
+        StartCoroutine(Manager.OnItemButtonClicked(Item));
     }
 
     public void SetItem(SupabaseDao.InventoryItem item)
     {
         Item = item;
     }
+
     public void OnPointerEnterButton()
     {
-        LeanTween.scale(gameObject, new Vector3(1.1f, 1.1f, 1f), 0.2f).setEase(LeanTweenType.easeInOutSine);
+        if (!PlayerHasThisItem)
+            LeanTween.scale(gameObject, new Vector3(1.1f, 1.1f, 1f), 0.2f).setEase(LeanTweenType.easeInOutSine);
     }
 
     public void OnPointerExitButton()
     {
-        LeanTween.scale(gameObject, new Vector3(1f, 1f, 1f), 0.2f).setEase(LeanTweenType.easeInOutSine);
+        if (!PlayerHasThisItem)
+            LeanTween.scale(gameObject, new Vector3(1f, 1f, 1f), 0.2f).setEase(LeanTweenType.easeInOutSine);
+    }
+
+    public void SetPlayerHasThisItem(bool hasItem)
+    {
+        PlayerHasThisItem = hasItem;
     }
 
 }

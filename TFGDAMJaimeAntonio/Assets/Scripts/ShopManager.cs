@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
@@ -20,7 +21,8 @@ public class ShopManager : MonoBehaviour
     private int SelectedItemPrice;
     private int SelectedUserCoins;
     private bool CanBuyPopUp = false;
-
+    public Button PopUpShopBuyButton;
+    public TMP_Text PopUpShopTitle;
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -104,37 +106,50 @@ public class ShopManager : MonoBehaviour
         {
             foreach (var item in AvaibleShopItems)
             {
-                GameObject ItemButton = Instantiate(ShopItemPrefab, ShopItemPrefabParent.transform);
-                ItemButton.GetComponent<ShopButtonScript>().Initialize(this, item);
-                Transform childTransform = ItemButton.transform.Find("TextName");
+                bool playerHasItem = false;
+                GameObject itemButton = Instantiate(ShopItemPrefab, ShopItemPrefabParent.transform);
+                ShopButtonScript buttonScript = itemButton.GetComponent<ShopButtonScript>();
+                buttonScript.Initialize(this, item);
+                Transform childTransform = itemButton.transform.Find("TextName");
                 if (childTransform != null)
                 {
                     TMP_Text childObject = childTransform.GetComponent<TMP_Text>();
                     childObject.text = item.name;
                 }
 
-                childTransform = ItemButton.transform.Find("TextPrice");
+                childTransform = itemButton.transform.Find("TextPrice");
                 if (childTransform != null)
                 {
                     TMP_Text childObject = childTransform.GetComponent<TMP_Text>();
-                    if (PlayerHasItem(item))
+                    playerHasItem = PlayerHasItem(item);
+                    buttonScript.SetPlayerHasThisItem(playerHasItem);
+                    if (playerHasItem)
                     {
                         childObject.text = "Owned";
+                        SetButtonImagesTransparency(PopUpShopBuyButton, 0.5f);
                     }
                     else
                     {
+                        SetButtonImagesTransparency(PopUpShopBuyButton, 1f);
                         childObject.text = item.main_price.ToString();
                     }
                 }
 
-                childTransform = ItemButton.transform.Find("ShopButton");
+                childTransform = itemButton.transform.Find("ShopButton");
+                Button childTransformButton = childTransform.GetComponent<Button>();
+
+                if (playerHasItem)
+                    childTransformButton.interactable = false;
+                else
+                    childTransformButton.interactable = true;
+
                 childTransform = childTransform.transform.Find("ItemImage");
                 if (childTransform != null)
                 {
                     Image childObject = childTransform.GetComponent<Image>();
                     StartCoroutine(LoadSpriteFromURL(item.url_image, childObject, SetImageSprite));
                 }
-                ShopItemsGameObjects.Add(ItemButton);
+                ShopItemsGameObjects.Add(itemButton);
             }
         }
     }
@@ -158,7 +173,7 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    public void ShowPopUpInfo(string itemSelectedName)
+    public IEnumerator ShowPopUpInfo(string itemSelectedName)
     {
         foreach (var shopGameObject in ShopItemsGameObjects)
         {
@@ -178,7 +193,19 @@ public class ShopManager : MonoBehaviour
                 break;
             }
         }
-        StartCoroutine(CheckIfCanBuy());
+        yield return StartCoroutine(CheckIfCanBuy());
+        if (CanBuyPopUp)
+        {
+            PopUpShopBuyButton.interactable = true;
+            PopUpShopTitle.text = "Do you want to buy this object?";
+            PopUpShopTitle.color = Color.white;
+        }
+        else
+        {
+            PopUpShopBuyButton.interactable = false;
+            PopUpShopTitle.text = "You don't have enough coins to buy this object!";
+            PopUpShopTitle.color = Color.red;
+        }
         OpenPopUp();
     }
     private void SetImageSprite(Sprite sprite, Image imageToSet)
@@ -199,13 +226,13 @@ public class ShopManager : MonoBehaviour
         return false;
     }
 
-    public void OnItemButtonClicked(SupabaseDao.InventoryItem item)
+    public IEnumerator OnItemButtonClicked(SupabaseDao.InventoryItem item)
     {
         foreach (var shopGameObject in ShopItemsGameObjects)
         {
             if (shopGameObject.transform.Find("TextName").GetComponent<TMP_Text>().text == item.name)
             {
-                ShowPopUpInfo(item.name);
+                yield return ShowPopUpInfo(item.name);
                 break;
             }
         }
@@ -234,6 +261,20 @@ public class ShopManager : MonoBehaviour
     private void SetIfCanBuy(int playerCoins, int itemPrice)
     {
         CanBuyPopUp = playerCoins >= itemPrice;
+    }
+
+    private void SetButtonImagesTransparency(Button button, float alpha)
+    {
+        foreach (Transform child in button.transform)
+        {
+            Image image = child.GetComponent<Image>();
+            if (image != null)
+            {
+                Color color = image.color;
+                color.a = alpha;
+                image.color = color;
+            }
+        }
     }
 
 
