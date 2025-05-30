@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ItemInfoScript : MonoBehaviour
 {
-    public SupabaseDAO.InventoryItem ItemInfo;
+    public SupabaseDao.InventoryItem ItemInfo;
     private ShopManager Manager;
     // Start is called before the first frame update
     void Start()
@@ -18,10 +18,6 @@ public class ItemInfoScript : MonoBehaviour
         
     }
 
-    public SupabaseDAO.InventoryItem GetItemInfo()
-    {
-        return ItemInfo;
-    }
 
     public void ShowItemInfo()
     {

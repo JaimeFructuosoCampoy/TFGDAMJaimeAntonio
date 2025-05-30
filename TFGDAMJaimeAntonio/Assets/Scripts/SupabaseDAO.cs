@@ -6,10 +6,10 @@ using UnityEngine.Networking;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
 
-public class SupabaseDAO : MonoBehaviour
+public class SupabaseDao : MonoBehaviour
 {
-    private static SupabaseDAO instance;
-    public static SupabaseDAO Instance => instance;
+    private static SupabaseDao instance;
+    public static SupabaseDao Instance => instance;
 
     private string AccessToken;
     private string RefreshToken;
@@ -398,6 +398,118 @@ public class SupabaseDAO : MonoBehaviour
         }
 
         onResult?.Invoke(itemsList);
+    }
+
+    //public IEnumerator ModifyUserByCoins(int coinsValue)
+    //{
+    //    yield return StartCoroutine(GetPlayerCoins(GetCoins));
+    //    string url = $"{GlobalData.SUPABASE_DB_URL}Player?coins=eq.{coinsValue}";
+    //    var body = new
+    //    {
+    //        coins = coinsValue
+    //    };
+    //    string jsonData = JsonConvert.SerializeObject(body);
+
+    //    using (UnityWebRequest request = new UnityWebRequest(url, "PATCH"))
+    //    {
+    //        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+    //        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+    //        request.downloadHandler = new DownloadHandlerBuffer();
+    //        request.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+    //        request.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+    //        request.SetRequestHeader("Content-Type", "application/json");
+    //        request.SetRequestHeader("Prefer", "return=minimal");
+
+    //        yield return request.SendWebRequest();
+
+    //        if (request.result == UnityWebRequest.Result.Success)
+    //        {
+    //            Debug.Log("PATCH realizado correctamente.");
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Error en PATCH: " + request.error + " - " + request.downloadHandler.text);
+    //        }
+    //    }
+    //}
+
+    public IEnumerator GetPlayerCoins(Action<int> onComplete)
+    {
+        string url = $"{GlobalData.SUPABASE_DB_URL}Player?select=coins";
+
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            webRequest.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            webRequest.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                try
+                {
+                    var response = JsonConvert.DeserializeObject<List<Dictionary<string, int>>>(webRequest.downloadHandler.text);
+                    if (response != null && response.Count > 0 && response[0].ContainsKey("coins"))
+                    {
+                        onComplete?.Invoke(response[0]["coins"]);
+                    }
+                    else
+                    {
+                        Debug.LogError("No se encontraron datos de monedas en la respuesta.");
+                        onComplete?.Invoke(-1);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error al procesar la respuesta de monedas: {ex.Message}");
+                    onComplete?.Invoke(-1);
+                }
+            }
+            else
+            {
+                Debug.LogError($"Error al obtener las monedas: {webRequest.error} - {webRequest.downloadHandler.text}");
+                onComplete?.Invoke(-1);
+            }
+        }
+    }
+    public IEnumerator GetItemPriceByName(string itemName, Action<int> onComplete)
+    {
+        string url = $"{GlobalData.SUPABASE_DB_URL}Items?select=main_price&name=eq.{itemName}";
+
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            webRequest.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            webRequest.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                try
+                {
+                    var response = JsonConvert.DeserializeObject<List<Dictionary<string, int>>>(webRequest.downloadHandler.text);
+                    if (response != null && response.Count > 0 && response[0].ContainsKey("main_price"))
+                    {
+                        onComplete?.Invoke(response[0]["main_price"]);
+                    }
+                    else
+                    {
+                        Debug.LogError("No se encontró el precio del item en la respuesta.");
+                        onComplete?.Invoke(-1);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error al procesar la respuesta de precio: {ex.Message}");
+                    onComplete?.Invoke(-1);
+                }
+            }
+            else
+            {
+                Debug.LogError($"Error al obtener el precio del item: {webRequest.error} - {webRequest.downloadHandler.text}");
+                onComplete?.Invoke(-1);
+            }
+        }
     }
 
     [System.Serializable]
