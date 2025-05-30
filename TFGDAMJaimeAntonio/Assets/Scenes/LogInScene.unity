@@ -682,19 +682,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7536931415348237191, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7536931415348237191, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 459820799}
     - target: {fileID: 7536931415348237191, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LoginClick
+      value: SwitchScene
       objectReference: {fileID: 0}
     - target: {fileID: 7536931415348237191, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: LoginManagerScript, Assembly-CSharp
+      value: ButtonScript, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7536931415348237191, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
@@ -721,6 +721,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1719477702901239218, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
   m_PrefabInstance: {fileID: 459820797}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &459820799 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3401708368086382085, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
+  m_PrefabInstance: {fileID: 459820797}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e38fa5110a3752c4ab5e91635a5faeae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &501033601
 GameObject:
   m_ObjectHideFlags: 0
@@ -4021,8 +4032,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u200B"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 26a89de098a7f49459a596502cda8878, type: 2}
-  m_sharedMaterial: {fileID: 2220265901165026458, guid: 26a89de098a7f49459a596502cda8878, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3a8b282ac78504847b2ce1b4b49bb831, type: 2}
+  m_sharedMaterial: {fileID: 8830266000730063502, guid: 3a8b282ac78504847b2ce1b4b49bb831, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4201,8 +4212,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u200B"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 26a89de098a7f49459a596502cda8878, type: 2}
-  m_sharedMaterial: {fileID: 2220265901165026458, guid: 26a89de098a7f49459a596502cda8878, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3a8b282ac78504847b2ce1b4b49bb831, type: 2}
+  m_sharedMaterial: {fileID: 8830266000730063502, guid: 3a8b282ac78504847b2ce1b4b49bb831, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
