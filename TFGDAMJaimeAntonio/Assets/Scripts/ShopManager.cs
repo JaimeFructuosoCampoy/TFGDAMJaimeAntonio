@@ -47,7 +47,7 @@ public class ShopManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Metodo que hace de interruptor para la confirmación de compra
+    /// Metodo que hace de interruptor para la confirmaciï¿½n de compra
     /// </summary>
     public void TogglePopUPLenguage()
     {
@@ -66,7 +66,7 @@ public class ShopManager : MonoBehaviour
         PopUpShop.SetActive(true);
 
         PopUpShop.transform.localScale = new Vector3(0, 0, 0);
-        LeanTween.scale(PopUpShop, new Vector3(2, 2, 1), 0.5f).setEaseOutBack();
+        LeanTween.scale(PopUpShop, new Vector3(1, 1, 1), 0.5f).setEaseOutBack();
 
         isPopUpActive = true;
     }
@@ -276,6 +276,4 @@ public class ShopManager : MonoBehaviour
             }
         }
     }
-
-
 }
