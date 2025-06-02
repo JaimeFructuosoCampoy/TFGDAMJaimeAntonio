@@ -400,39 +400,6 @@ public class SupabaseDao : MonoBehaviour
         onResult?.Invoke(itemsList);
     }
 
-    //public IEnumerator ModifyUserByCoins(int coinsValue)
-    //{
-    //    yield return StartCoroutine(GetPlayerCoins(GetCoins));
-    //    string url = $"{GlobalData.SUPABASE_DB_URL}Player?coins=eq.{coinsValue}";
-    //    var body = new
-    //    {
-    //        coins = coinsValue
-    //    };
-    //    string jsonData = JsonConvert.SerializeObject(body);
-
-    //    using (UnityWebRequest request = new UnityWebRequest(url, "PATCH"))
-    //    {
-    //        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
-    //        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-    //        request.downloadHandler = new DownloadHandlerBuffer();
-    //        request.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
-    //        request.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
-    //        request.SetRequestHeader("Content-Type", "application/json");
-    //        request.SetRequestHeader("Prefer", "return=minimal");
-
-    //        yield return request.SendWebRequest();
-
-    //        if (request.result == UnityWebRequest.Result.Success)
-    //        {
-    //            Debug.Log("PATCH realizado correctamente.");
-    //        }
-    //        else
-    //        {
-    //            Debug.LogError("Error en PATCH: " + request.error + " - " + request.downloadHandler.text);
-    //        }
-    //    }
-    //}
-
     public IEnumerator GetPlayerCoins(Action<int> onComplete)
     {
         string url = $"{GlobalData.SUPABASE_DB_URL}Player?select=coins";
@@ -511,9 +478,73 @@ public class SupabaseDao : MonoBehaviour
             }
         }
     }
+    public IEnumerator UpdatePlayerCoins(int coinsValue, string itemId)
+    {
+        string url = $"{GlobalData.SUPABASE_DB_URL}Player?coins=eq.{coinsValue}";
+        var body = new
+        {
+            coins = coinsValue
+        };
+        string jsonData = JsonConvert.SerializeObject(body);
 
-    [System.Serializable]
-    private class AuthResponse
+        using (UnityWebRequest request = new UnityWebRequest(url, "PATCH"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            request.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Prefer", "return=minimal");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("PATCH realizado correctamente.");
+                StartCoroutine(UpdatePlayerInventory(itemId));
+            }
+            else
+            {
+                Debug.LogError("Error en PATCH: " + request.error + " - " + request.downloadHandler.text);
+            }
+        }
+    }
+
+    public IEnumerator UpdatePlayerInventory(string itemId)
+    {
+        string url = "https://bxjubueuyzobmpvdwefk.supabase.co/rest/v1/Inventory";
+        var body = new
+        {
+            player_id = PlayerLoggedIn.PlayerId, // Asegúrate de que PlayerLoggedIn.PlayerId tiene el user_id correcto
+            item_id = itemId,
+            created_at = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ")
+        };
+        string jsonData = JsonConvert.SerializeObject(body);
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            request.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Prefer", "return=minimal");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Registro añadido correctamente al inventario.");
+            }
+            else
+            {
+                Debug.LogError("Error al añadir al inventario: " + request.error + " - " + request.downloadHandler.text);
+            }
+        }
+    }
+    class AuthResponse
     {
         public string access_token;
         public string refresh_token;

@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
@@ -17,12 +18,12 @@ public class ShopManager : MonoBehaviour
     List<GameObject> ShopItemsGameObjects;
     public GameObject ShopItemPrefab;
     public GameObject ShopItemPrefabParent;
-    private bool BuyingTransactionFinalized = false;
     private int SelectedItemPrice;
     private int SelectedUserCoins;
     private bool CanBuyPopUp = false;
     public Button PopUpShopBuyButton;
     public TMP_Text PopUpShopTitle;
+    public string SelectedItemName;
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -95,8 +96,10 @@ public class ShopManager : MonoBehaviour
     {
         //Cerrar el popup de compra
         ClosePopUp();
-
-        //Logica para realizar compra
+        string selectedItemId = GetItemIdByName(SelectedItemName);
+        BuyItem(selectedItemId);
+        SupabaseDao.Instance.GetInventory();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void GetItems(List<SupabaseDao.InventoryItem> items)
@@ -232,6 +235,7 @@ public class ShopManager : MonoBehaviour
         {
             if (shopGameObject.transform.Find("TextName").GetComponent<TMP_Text>().text == item.name)
             {
+                SelectedItemName = item.name;
                 yield return ShowPopUpInfo(item.name);
                 break;
             }
@@ -275,5 +279,23 @@ public class ShopManager : MonoBehaviour
                 image.color = color;
             }
         }
+    }
+
+    private void BuyItem(string itemId)
+    {
+        int newCoins = PlayerLoggedIn.Coins - SelectedItemPrice;
+        StartCoroutine(SupabaseDao.Instance.UpdatePlayerCoins(newCoins, itemId));
+    }
+
+    public string GetItemIdByName(string itemName)
+    {
+        foreach (var item in AvaibleShopItems)
+        {
+            if (item.name == itemName)
+            {
+                return item.id;
+            }
+        }
+        return null;
     }
 }
