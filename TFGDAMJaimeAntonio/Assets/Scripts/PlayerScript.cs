@@ -15,7 +15,7 @@ public class PlayerScript : MonoBehaviour
     private int Coins = 0;
     public TMP_Text CoinsText;
 
-    // Referencias a los botones móviles
+    // Referencias a los botones mï¿½viles
     public GameObject MobileControls;
     public Button ButtonLeft;
     public Button ButtonRight;
@@ -32,12 +32,12 @@ public class PlayerScript : MonoBehaviour
         Rb2D = GetComponent<Rigidbody2D>();
         Sprite = GetComponent<SpriteRenderer>();
 
-        // Mostrar controles móviles solo en Android
+        // Mostrar controles mï¿½viles solo en Android
         //if (MobileControls != null)
             //MobileControls.SetActive(Application.platform == RuntimePlatform.Android);
     }
 
-    // Métodos para EventTrigger
+    // Mï¿½todos para EventTrigger
     public void OnLeftDown() { isLeftPressed = true; }
     public void OnLeftUp() { isLeftPressed = false; }
     public void OnRightDown() { isRightPressed = true; }
@@ -90,9 +90,9 @@ public class PlayerScript : MonoBehaviour
             case "Platform":
                 //var directionsAndWays = GlobalFunctions.DetectDirectionAndWay(collision);  
                 //var directionAndWay = directionsAndWays[0];  
-                //if (!directionAndWay.Item1 && !directionAndWay.Item2) // Si la colisión es por arriba  
+                //if (!directionAndWay.Item1 && !directionAndWay.Item2) // Si la colisiï¿½n es por arriba  
                 //    CanJump = false;  
-                //else if (!directionAndWay.Item1 || directionAndWay.Item2) // Si la colisión es por abajo  
+                //else if (!directionAndWay.Item1 || directionAndWay.Item2) // Si la colisiï¿½n es por abajo  
                 //    CanJump = true;  
                 CanJump = true;
                 break;
@@ -124,6 +124,7 @@ public class PlayerScript : MonoBehaviour
                 Destroy(collision.gameObject);
                 Coins++;
                 CoinsText.SetText(Coins.ToString());
+                
                 break;
             case "Enemy":
                 GlobalData.GameOver = true;
