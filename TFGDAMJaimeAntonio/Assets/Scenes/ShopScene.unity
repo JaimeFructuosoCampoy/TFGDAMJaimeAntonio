@@ -4514,7 +4514,7 @@ PrefabInstance:
       objectReference: {fileID: 1957916996}
     - target: {fileID: 6705969568501869258, guid: bda1f5ffdb5e66443947dec4e044e19b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ConfirmBuy
+      value: ConfirmBuyOnClick
       objectReference: {fileID: 0}
     - target: {fileID: 6705969568501869258, guid: bda1f5ffdb5e66443947dec4e044e19b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -5722,6 +5722,7 @@ MonoBehaviour:
   ShopItemPrefabParent: {fileID: 727305148}
   PopUpShopBuyButton: {fileID: 199622915}
   PopUpShopTitle: {fileID: 120310719}
+  SelectedItemName: 
 --- !u!4 &1957916997
 Transform:
   m_ObjectHideFlags: 0

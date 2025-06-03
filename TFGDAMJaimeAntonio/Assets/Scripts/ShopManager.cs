@@ -92,16 +92,20 @@ public class ShopManager : MonoBehaviour
         ClosePopUp();
     }
 
-    public void ConfirmBuy()
+    public IEnumerator ConfirmBuy()
     {
         //Cerrar el popup de compra
         ClosePopUp();
         string selectedItemId = GetItemIdByName(SelectedItemName);
-        BuyItem(selectedItemId);
-        SupabaseDao.Instance.GetInventory();
+        yield return StartCoroutine(BuyItem(selectedItemId));
+        yield return StartCoroutine(SupabaseDao.Instance.GetInventoryIdCoroutine());
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public void ConfirmBuyOnClick()
+    {
+        StartCoroutine(ConfirmBuy());
+    }
     private void GetItems(List<SupabaseDao.InventoryItem> items)
     {
         AvaibleShopItems = items;
@@ -281,10 +285,10 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    private void BuyItem(string itemId)
+    private IEnumerator BuyItem(string itemId)
     {
         int newCoins = PlayerLoggedIn.Coins - SelectedItemPrice;
-        StartCoroutine(SupabaseDao.Instance.UpdatePlayerCoins(newCoins, itemId));
+        yield return StartCoroutine(SupabaseDao.Instance.UpdatePlayerCoins(newCoins, itemId));
     }
 
     public string GetItemIdByName(string itemName)
