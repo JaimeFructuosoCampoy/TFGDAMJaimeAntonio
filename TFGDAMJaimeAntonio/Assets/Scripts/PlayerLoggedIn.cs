@@ -39,5 +39,5 @@ public class PlayerLoggedIn : MonoBehaviour
         Diamonds = 0;
         Inventory = new List<InventoryItem>();
     }
-
+    
 }

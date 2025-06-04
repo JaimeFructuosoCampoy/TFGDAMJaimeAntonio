@@ -310,7 +310,7 @@ public class SupabaseDao : MonoBehaviour
         StartCoroutine(GetInventoryIdCoroutine());
     }
 
-    IEnumerator GetInventoryIdCoroutine()
+    public IEnumerator GetInventoryIdCoroutine()
     {
         string url = GlobalData.SUPABASE_DB_URL + "Inventory?select=item_id";
 
@@ -328,7 +328,7 @@ public class SupabaseDao : MonoBehaviour
                 var inventoryList = JsonConvert.DeserializeObject<List<PlayerInventory>>(webRequest.downloadHandler.text);
                 if (inventoryList != null && inventoryList.Count > 0)
                 {
-                    StartCoroutine(GetInventoryItems(inventoryList));
+                    yield return StartCoroutine(GetInventoryItems(inventoryList));
                 }
             }
             else
@@ -480,7 +480,7 @@ public class SupabaseDao : MonoBehaviour
     }
     public IEnumerator UpdatePlayerCoins(int coinsValue, string itemId)
     {
-        string url = $"{GlobalData.SUPABASE_DB_URL}Player?coins=eq.{coinsValue}";
+        string url = $"{GlobalData.SUPABASE_DB_URL}Player?id=eq.{PlayerLoggedIn.PlayerId}";
         var body = new
         {
             coins = coinsValue
@@ -502,6 +502,7 @@ public class SupabaseDao : MonoBehaviour
             if (request.result == UnityWebRequest.Result.Success)
             {
                 Debug.Log("PATCH realizado correctamente.");
+                PlayerLoggedIn.Coins = coinsValue;
                 StartCoroutine(UpdatePlayerInventory(itemId));
             }
             else
