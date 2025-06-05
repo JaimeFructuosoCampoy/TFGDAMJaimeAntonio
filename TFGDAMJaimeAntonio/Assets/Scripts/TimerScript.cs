@@ -13,7 +13,6 @@ public class TimerScript : MonoBehaviour
     private uint Seconds = 0;
     private uint Minutes = 0;
     private uint Hours = 0;
-    private uint Days = 0;
 
     private uint LastSecondValue = 0;
     private uint LastMinuteValue = 0;
@@ -25,7 +24,7 @@ public class TimerScript : MonoBehaviour
         {
             Destroy(gameObject);
             return;
-        } 
+        }
 
         Instance = this;
     }

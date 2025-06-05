@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     private Dictionary<int, bool> IsRandomUbicationEnemy;
     public GameObject[] EnemyObjects;
     private float TimeUntilNewEnemy;
+    private int test;
 
     //Manager de IA
     public QuestionHandler questionHandler;
@@ -159,11 +160,6 @@ public class GameManager : MonoBehaviour
             HidePauseMenu();
             Time.timeScale = 1f;
         }
-    }
-
-    private void VerifyDataIntegrity()
-    {
-
     }
 
     private void CheckPause()

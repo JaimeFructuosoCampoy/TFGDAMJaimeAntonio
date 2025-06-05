@@ -11,6 +11,7 @@ TagManager:
   - Platform
   - WallCheckLeft
   - WallCheckRight
+  - Meteorite
   layers:
   - Default
   - TransparentFX

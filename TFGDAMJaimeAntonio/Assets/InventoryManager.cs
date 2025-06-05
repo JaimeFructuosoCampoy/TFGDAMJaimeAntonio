@@ -12,6 +12,7 @@ public class InventoryManager : MonoBehaviour
     public GameObject InventoryItemPrefab;
     public GameObject InventoryItemPrefabParent;
     private string UrlImage;
+    public Image CheckImage;
 
     void Start()
     {
@@ -45,18 +46,18 @@ public class InventoryManager : MonoBehaviour
             if (buttonScript.IsThisItemEquiped())
             {
                 GameObject shopButton = newItem.transform.Find("ShopButton").gameObject;
-                GameObject checkImage = GameObject.Find("CheckImage");
-                checkImage.transform.SetParent(shopButton.transform, false);
-                checkImage.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(115f, -58f, -2.9f);
-                checkImage.GetComponent<RectTransform>().sizeDelta = new Vector2(55.05f, 51.72f);
-                checkImage.SetActive(true);
+                
+                CheckImage.transform.SetParent(shopButton.transform, false);
+                CheckImage.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(115f, -58f, -2.9f);
+                CheckImage.GetComponent<RectTransform>().sizeDelta = new Vector2(55.05f, 51.72f);
+                CheckImage.gameObject.SetActive(true);
             }
             
         }
 
         if (PlayerLoggedIn.ItemEquiped == null)
         {
-            GameObject.Find("CheckImage").SetActive(false);
+            CheckImage.gameObject.SetActive(false);
         }
     }
 
@@ -88,11 +89,10 @@ public class InventoryManager : MonoBehaviour
     public void ShowEquipedItem(GameObject item)
     {
         GameObject shopButton = item.transform.Find("ShopButton").gameObject;
-        GameObject checkImage = GameObject.Find("CheckImage");
-        checkImage.transform.SetParent(shopButton.transform, false);
-        checkImage.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(115f, -58f, -2.9f);
-        checkImage.GetComponent<RectTransform>().sizeDelta = new Vector2(55.05f, 51.72f);
-        checkImage.SetActive(true);
+        CheckImage.transform.SetParent(shopButton.transform, false);
+        CheckImage.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(115f, -58f, -2.9f);
+        CheckImage.GetComponent<RectTransform>().sizeDelta = new Vector2(55.05f, 51.72f);
+        CheckImage.gameObject.SetActive(true);
     }
 
     private void GetImageUrl(string url_image)

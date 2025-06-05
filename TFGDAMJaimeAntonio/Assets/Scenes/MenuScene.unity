@@ -1167,7 +1167,7 @@ GameObject:
   - component: {fileID: 507907970}
   - component: {fileID: 507907969}
   m_Layer: 0
-  m_Name: Music Player
+  m_Name: MusicPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1598,6 +1598,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7536931415348237191, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: InventoryScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 7536931415348237191, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_StringArgument
       value: InventoryScene
       objectReference: {fileID: 0}
     - target: {fileID: 8309175230566829403, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
@@ -3366,6 +3370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 467fddd73688b054299611e4abea3c24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AccessToken: 
 --- !u!4 &1613095599
 Transform:
   m_ObjectHideFlags: 0
