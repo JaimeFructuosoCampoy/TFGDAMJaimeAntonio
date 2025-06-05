@@ -15,6 +15,7 @@ public class QuestionHandler : MonoBehaviour
     private bool awaitingAnswer = false; // Indica si se está esperando una respuesta de la API.
 
     public GameObject popUpIA; // Popup que muestra la pregunta generada por la IA.
+    public GameObject backBlack;
 
     public GameObject PopUpFeedback; // Popup que muestra el feedback al usuario.
     public TMP_Text popUpFeedbackText; // Texto dentro del popup para mostrar el feedback.
@@ -182,13 +183,15 @@ public class QuestionHandler : MonoBehaviour
             {
                 popUpIA.SetActive(false);
                 onPopupClosed?.Invoke();
-                gameManager.BackgroundQuit(); // <-- Aquí, después de la animación
+                backBlack.SetActive(false); // <-- Aquí, después de la animación
             });
     }
 
     private void OpenPopUpIA()
     {
         Debug.Log("Intentando abrir el popup principal (popUpIA)..."); // Depuración
+
+        backBlack.SetActive(true);
 
         // Reinicia la escala del popup a (0, 0, 0)
         popUpIA.transform.localScale = new Vector3(0, 0, 0);
