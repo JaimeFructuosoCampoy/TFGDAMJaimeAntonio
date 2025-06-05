@@ -490,8 +490,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3401708368086382085}
         m_TargetAssemblyTypeName: ButtonScript, Assembly-CSharp
-        m_MethodName: SwitchScene
-        m_Mode: 5
+        m_MethodName: PlayButtonClickSound
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -502,8 +502,8 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 3401708368086382085}
         m_TargetAssemblyTypeName: ButtonScript, Assembly-CSharp
-        m_MethodName: PlayButtonClickSound
-        m_Mode: 1
+        m_MethodName: SwitchScene
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
