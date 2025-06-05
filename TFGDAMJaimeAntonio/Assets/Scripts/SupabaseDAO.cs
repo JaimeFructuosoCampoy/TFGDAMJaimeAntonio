@@ -11,7 +11,7 @@ public class SupabaseDao : MonoBehaviour
     private static SupabaseDao instance;
     public static SupabaseDao Instance => instance;
 
-    private string AccessToken;
+    public string AccessToken;
     private string RefreshToken;
     private long TokenExpirationTime;
 

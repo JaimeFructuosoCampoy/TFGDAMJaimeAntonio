@@ -13,6 +13,7 @@ public class PlayerLoggedIn : MonoBehaviour
     public static int Points { get; set; }
     public static int Diamonds { get; set; }
     public static List<InventoryItem> Inventory { get; set; }
+    public static InventoryItem ItemEquiped { get; set; }
 
     public static void InitializeOrUpdatePlayerData(PlayerData data)
     {
