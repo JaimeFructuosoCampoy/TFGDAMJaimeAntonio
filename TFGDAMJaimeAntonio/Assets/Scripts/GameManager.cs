@@ -364,4 +364,12 @@ public class GameManager : MonoBehaviour
         backBlack.SetActive(false);
     }
 
+    public void ReturnToMenu()
+    {
+        //Volver a poner el tiempo en normal
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene("MenuScene");
+    }
+
 }
