@@ -78,7 +78,7 @@ public class TimerScript : MonoBehaviour
 
         if (Hours >= 24) 
         {
-            Days++;
+            //Days++;
             Hours = 0;
         }
 
