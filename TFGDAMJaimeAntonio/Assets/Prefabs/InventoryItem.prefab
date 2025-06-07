@@ -142,7 +142,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e41098e0d3a123b41b4403ec0f16317d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a5ad0f1b97c3ef144aa3f31ab0f24089, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -456,11 +456,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8430620500064109566, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnClickButton
+      value: OnPointerEnterButton
       objectReference: {fileID: 0}
     - target: {fileID: 8430620500064109566, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnClickButton
+      value: OnPointerExitButton
       objectReference: {fileID: 0}
     - target: {fileID: 8430620500064109566, guid: 3258c108d8ebada4ca6ddea96fd979b5, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName

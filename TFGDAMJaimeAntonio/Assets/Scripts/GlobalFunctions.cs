@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public static class GlobalFunctions
 {
-    ///private int test;
     public static List<Tuple<bool, bool>> DetectDirectionAndWay(Collision2D collision)
     {
         List<Tuple<bool, bool>> directionsAndWays = new();

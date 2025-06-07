@@ -9,7 +9,7 @@ public class EnemyFly : MonoBehaviour
     private bool IsMovingRight = true;
     private Vector2 StartPos;
     private SpriteRenderer EnemySprite;
-
+    private int test;
     void Start()
     {
         StartPos = transform.position;

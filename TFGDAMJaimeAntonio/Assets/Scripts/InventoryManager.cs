@@ -13,6 +13,7 @@ public class InventoryManager : MonoBehaviour
     public GameObject InventoryItemPrefabParent;
     private string UrlImage;
     public Image CheckImage;
+    public Button UnEquipObject;
 
     void Start()
     {
@@ -23,7 +24,14 @@ public class InventoryManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (PlayerLoggedIn.ItemEquiped != null)
+        {
+            UnEquipObject.interactable = true;
+        }
+        else
+        {
+            UnEquipObject.interactable = false;
+        }
     }
 
     IEnumerator ShowInventory()
@@ -98,5 +106,11 @@ public class InventoryManager : MonoBehaviour
     private void GetImageUrl(string url_image)
     {
         UrlImage = url_image;
+    }
+
+    public void UnequipObject()
+    {
+        PlayerLoggedIn.ItemEquiped = null;
+        CheckImage.gameObject.SetActive(false);
     }
 }

@@ -43,6 +43,7 @@ public class MenuManager : MonoBehaviour
             PointText.text = PlayerLoggedIn.Points.ToString();
             CoinText.text = PlayerLoggedIn.Coins.ToString();
         }
+        
     }
 
     private void AnimateTitle()

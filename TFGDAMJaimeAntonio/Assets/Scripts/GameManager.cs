@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
             GameOverObject.transform.localScale = Vector3.zero;
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         CheckPause();

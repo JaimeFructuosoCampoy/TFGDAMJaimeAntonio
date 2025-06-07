@@ -15,10 +15,6 @@ public class InventoryButtonScript : MonoBehaviour
     {
         Manager = FindObjectOfType<InventoryManager>();
         SetPlayerHasThisItemEquiped();
-        if (Manager != null)
-        {
-            
-        }
     }
 
     void Update()
