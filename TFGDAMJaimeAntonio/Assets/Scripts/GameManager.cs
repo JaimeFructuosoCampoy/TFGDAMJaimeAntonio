@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviour
     private Dictionary<int, bool> IsRandomUbicationEnemy;
     public GameObject[] EnemyObjects;
     private float TimeUntilNewEnemy;
-    private int test;
 
     //Manager de IA
     public QuestionHandler questionHandler;
@@ -193,7 +192,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator SelectAndStartCataclysm()
     {
-        int cataclysm = 2; /*UnityEngine.Random.Range(0, 3);*/
+        int cataclysm = UnityEngine.Random.Range(0, 3);
         if (CataclysmIsNotRandomUbicationEnded)
         {
             Debug.Log("Se ha seleccionado el cataclismo " + (Cataclysms)cataclysm);
@@ -364,7 +363,9 @@ public class GameManager : MonoBehaviour
     {
         //Volver a poner el tiempo en normal
         Time.timeScale = 1f;
-
+        GlobalData.GameOver = false;
+        //Implementar lógica de actualización de Monedas y Puntos aquí
+        PlayerLoggedIn.Points += PointCount;
         SceneManager.LoadScene("MenuScene");
     }
 

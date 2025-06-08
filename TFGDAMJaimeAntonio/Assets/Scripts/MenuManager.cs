@@ -23,6 +23,7 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GlobalData.GameOver = false;
         if (SceneManager.GetActiveScene().name != "MenuScene")
         {
             Destroy(this);

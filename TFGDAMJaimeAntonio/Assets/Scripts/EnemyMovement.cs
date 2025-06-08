@@ -8,8 +8,6 @@ public class EnemyMovement : MonoBehaviour
     private bool MovingRight = true;
     private Rigidbody2D RigidBody;
     private SpriteRenderer Sprite;
-
-    private bool test;
     void Start()
     {
         Sprite = GetComponent<SpriteRenderer>();
