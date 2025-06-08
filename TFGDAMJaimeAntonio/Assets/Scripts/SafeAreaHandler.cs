@@ -1,6 +1,5 @@
 using UnityEngine;
 
-// Este script se asegura de que el panel al que está añadido se ajuste al área segura de la pantalla.
 [RequireComponent(typeof(RectTransform))]
 public class SafeAreaHandler : MonoBehaviour
 {
@@ -13,9 +12,9 @@ public class SafeAreaHandler : MonoBehaviour
         ApplySafeArea();
     }
 
-    // Se usa Update para detectar cambios en la orientación del dispositivo (vertical/horizontal)
     void Update()
     {
+        // Vuelve a aplicar si el área segura cambia (ej. al girar el dispositivo)
         if (Screen.safeArea != lastSafeArea)
         {
             ApplySafeArea();
@@ -27,7 +26,7 @@ public class SafeAreaHandler : MonoBehaviour
         Rect safeArea = Screen.safeArea;
         lastSafeArea = safeArea;
 
-        // Convertir el rectángulo del área segura de píxeles a porcentajes (0 a 1)
+        // Convertir el área segura de píxeles a porcentajes (0 a 1)
         Vector2 anchorMin = safeArea.position;
         Vector2 anchorMax = safeArea.position + safeArea.size;
 
@@ -36,8 +35,15 @@ public class SafeAreaHandler : MonoBehaviour
         anchorMax.x /= Screen.width;
         anchorMax.y /= Screen.height;
 
+        
+        // Forzamos el anclaje superior (anchorMax.y) a llegar siempre al borde de la pantalla (valor de 1),
+        // ignorando el recorte del notch. Los otros tres lados se mantienen.
+        anchorMax.y = 1f;
+        
+
         // Aplicar los porcentajes a los anclajes del panel
         panel.anchorMin = anchorMin;
         panel.anchorMax = anchorMax;
+
     }
 }

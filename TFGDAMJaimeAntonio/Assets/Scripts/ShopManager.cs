@@ -23,6 +23,8 @@ public class ShopManager : MonoBehaviour
     public Button PopUpShopBuyButton;
     public TMP_Text PopUpShopTitle;
     public string SelectedItemName;
+    public TMP_Text PlayerCoinsText;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -38,12 +40,13 @@ public class ShopManager : MonoBehaviour
     {
         ShopItemsGameObjects = new List<GameObject>();
         StartCoroutine(SupabaseDao.Instance.GetAllItems(GetItems));
+        UpdatePlayerCoinsDisplay(); // Añade esta línea
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        UpdatePlayerCoinsDisplay();
     }
 
     /// <summary>
@@ -98,6 +101,7 @@ public class ShopManager : MonoBehaviour
         string selectedItemId = GetItemIdByName(SelectedItemName);
         yield return StartCoroutine(BuyItem(selectedItemId));
         yield return StartCoroutine(SupabaseDao.Instance.GetInventoryIdCoroutine());
+        UpdatePlayerCoinsDisplay();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -300,5 +304,13 @@ public class ShopManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    private void UpdatePlayerCoinsDisplay()
+    {
+        if (PlayerCoinsText != null)
+        {
+            PlayerCoinsText.text = PlayerLoggedIn.Coins.ToString();
+        }
     }
 }

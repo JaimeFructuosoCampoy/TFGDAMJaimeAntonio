@@ -81,7 +81,7 @@ public class MenuManager : MonoBehaviour
         PopUpLenguage.SetActive(true);
 
         PopUpLenguage.transform.localScale = new Vector3(0, 0, 0);
-        LeanTween.scale(PopUpLenguage, new Vector3(2, 2, 1), 0.5f).setEaseOutBack();
+        LeanTween.scale(PopUpLenguage, new Vector3(1.7f, 1.7f, 1), 0.5f).setEaseOutBack();
 
         isPopUpActive = true;
     }
