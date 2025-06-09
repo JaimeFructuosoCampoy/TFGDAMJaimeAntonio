@@ -369,4 +369,20 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("MenuScene");
     }
 
+    public void CheckEquipedObject()
+    {
+        string equipedObject = PlayerLoggedIn.ItemEquiped.name;
+        switch (equipedObject)
+        {
+            case "Mete-Helmet":
+                //Equipar casco
+                break;
+            case "Metal Umbrella":
+                //Equipar paraguas
+                break;
+            case "Bouncing boots":
+                //Equipar botas
+                break;
+        }
+    }
 }
