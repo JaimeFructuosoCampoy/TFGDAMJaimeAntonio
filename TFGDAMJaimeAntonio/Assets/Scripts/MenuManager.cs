@@ -23,6 +23,7 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = 1f;
         GlobalData.GameOver = false;
         if (SceneManager.GetActiveScene().name != "MenuScene")
         {
@@ -49,13 +50,17 @@ public class MenuManager : MonoBehaviour
 
     private void AnimateTitle()
     {
-        LeanTween.rotate(TitleText.gameObject, new Vector3(0f, 0f, 2.5f), 1f).setOnComplete(() =>
-        {
-            LeanTween.rotate(TitleText.gameObject, new Vector3(0f, 0f, -2.5f), 1f).setOnComplete(() =>
+        LeanTween.rotate(TitleText.gameObject, new Vector3(0f, 0f, 2.5f), 1f)
+            .setIgnoreTimeScale(true)
+            .setOnComplete(() =>
             {
-                AnimateTitle();
+                LeanTween.rotate(TitleText.gameObject, new Vector3(0f, 0f, -2.5f), 1f)
+                .setIgnoreTimeScale(true) // <-- Y esto
+                .setOnComplete(() =>
+                {
+                    AnimateTitle();
+                });
             });
-        });
     }
 
     /// <summary>
@@ -143,6 +148,23 @@ public class MenuManager : MonoBehaviour
             });
 
         isSettingsPopUpActive = false;
+    }
+
+    /// <summary>
+    /// Cierra la aplicación o detiene la ejecución en el editor.
+    /// </summary>
+    public void QuitGame()
+    {
+        Debug.Log("El jugador ha pulsado el botón de salir.");
+
+        
+        #if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+        
+
+        #else
+                Application.Quit();
+        #endif
     }
 
 }

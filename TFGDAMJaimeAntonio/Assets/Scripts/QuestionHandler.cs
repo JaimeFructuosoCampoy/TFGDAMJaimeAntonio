@@ -22,9 +22,10 @@ public class QuestionHandler : MonoBehaviour
 
     public event Action onPopupClosed; // Evento que se dispara cuando el popup se cierra.
     public GameManager gameManager;
+    private string[] currentAnswerOptions = new string[4];
 
     // Lista de temas específicos para las preguntas.
-    private string[] topics = { "lluvia", "meteoritos", "tsunamis" };
+    private string[] topics = { "lluvia", "meteoritos", "tsunamis, animales, planeta tierra" };
 
     void Start()
     {
@@ -77,33 +78,52 @@ public class QuestionHandler : MonoBehaviour
     /// Método para manejar la respuesta de la API.
     /// </summary>
     /// <param name="aiResponse"></param>
+    /// <summary>
+    /// Método para manejar la respuesta de la API.
+    /// </summary>
+    /// <param name="aiResponse"></param>
+    /// <summary>
+    /// Método para manejar la respuesta de la API.
+    /// </summary>
     void HandleAIResponse(string aiResponse)
     {
-        string questionWithOptions = ""; // Almacena la pregunta con las opciones.
-        correctAnswer = ""; // Reinicia la respuesta correcta.
+        Debug.Log("RESPUESTA COMPLETA DE LA API: " + aiResponse);
 
-        // Dividir la respuesta de la API en la pregunta y la respuesta correcta.
-        string[] parts = aiResponse.Split(new string[] { "Respuesta correcta:" }, System.StringSplitOptions.None);
+        string questionWithOptions = "";
+        correctAnswer = "";
+
+        string[] parts = aiResponse.Split(new string[] { "Respuesta correcta:" }, StringSplitOptions.None);
 
         if (parts.Length == 2)
         {
-            questionWithOptions = parts[0].Trim(); // Extraer la pregunta.
-            correctAnswer = parts[1].Trim().ToUpper(); // Extraer y normalizar la respuesta correcta.
+            questionWithOptions = parts[0].Trim();
+            correctAnswer = parts[1].Trim().ToUpper();
 
-            // Mostrar la pregunta en la interfaz.
+            Debug.Log("VALOR GUARDADO EN 'correctAnswer': " + correctAnswer);
+
+            // --- NUEVA LÓGICA DE PROCESAMIENTO ---
+            // Ahora procesamos las opciones y las guardamos en nuestro array
+            string[] lines = questionWithOptions.Split('\n');
+            foreach (string line in lines)
+            {
+                if (line.Trim().StartsWith("A)")) currentAnswerOptions[0] = line.Trim();
+                else if (line.Trim().StartsWith("B)")) currentAnswerOptions[1] = line.Trim();
+                else if (line.Trim().StartsWith("C)")) currentAnswerOptions[2] = line.Trim();
+                else if (line.Trim().StartsWith("D)")) currentAnswerOptions[3] = line.Trim();
+            }
+            // --- FIN DE LA NUEVA LÓGICA ---
+
             questionText.text = questionWithOptions;
 
-            // Habilitar los botones de respuesta.
             foreach (var button in answerButtons)
             {
                 button.interactable = true;
             }
 
-            awaitingAnswer = false; // Indicar que ya no se está esperando una respuesta.
+            awaitingAnswer = false;
         }
         else
         {
-            // Manejar errores en la respuesta de la API.
             questionText.text = "Error al obtener la pregunta de la IA.";
             awaitingAnswer = false;
         }
@@ -112,45 +132,52 @@ public class QuestionHandler : MonoBehaviour
     /// <summary>
     /// Método que se ejecuta al hacer clic en un botón de respuesta.
     /// </summary>
-    /// <param name="buttonIndex">Índice del botón presionado.</param>
     void OnAnswerButtonClicked(int buttonIndex)
     {
-        // Obtener la respuesta seleccionada por el usuario (A, B, C o D).
-        string userAnswer = ((char)('A' + buttonIndex)).ToString();
-        bool isCorrect = userAnswer == correctAnswer;
+        string userAnswerLetter = ((char)('A' + buttonIndex)).ToString();
+        bool isCorrect = userAnswerLetter == correctAnswer;
 
-        // Generar el feedback basado en la respuesta del usuario.
-        string feedback = $"Tu respuesta: {userAnswer}\nRespuesta correcta: {correctAnswer}";
+        // --- LÓGICA SIMPLIFICADA ---
+        // Ahora leemos los textos directamente desde nuestro array, no desde la UI
 
-        if (userAnswer == correctAnswer)
+        // 1. Obtenemos el texto completo de la respuesta del usuario desde nuestro array.
+        string userAnswerText = currentAnswerOptions[buttonIndex];
+
+        // 2. Obtenemos el texto completo de la respuesta correcta desde nuestro array.
+        int correctIndex = correctAnswer[0] - 'A';
+        string correctAnswerText = currentAnswerOptions[correctIndex];
+
+        // --- FIN DE LA LÓGICA SIMPLIFICADA ---
+
+        // 3. Construimos el feedback
+        string feedback = $"Respuesta correcta: {correctAnswerText}";
+
+        if (isCorrect)
         {
-            feedback += "\n\n¡Correcto! La gravedad en esta partida será un poco menor por lo que..\n ¡¡SALTARAS MáS!!";
+            feedback += "\n\n¡Correcto! La gravedad será un poco menor por lo que..\n ¡¡SALTARAS MáS!!";
         }
         else
         {
-            feedback += "\n\n¡Incorrecto! La gravedad en esta partida sera un poco mayor por lo que..\n Saltaras menos..";
+            feedback += "\n\n¡Incorrecto! La gravedad será un poco mayor por lo que..\n Saltaras menos..";
         }
 
-        //Mostrar el feedback en el popup.
         popUpFeedbackText.text = feedback;
         OpenPopUpFeedback();
 
-        // Deshabilitar los botones de respuesta.
         foreach (var button in answerButtons)
         {
             button.interactable = false;
         }
 
-        //Llamar directamente al GameManager
         if (isCorrect)
         {
             gameManager.removeGravity();
-            Console.WriteLine("Masa del jugador reducida");
+            Debug.Log("Gravedad del jugador reducida");
         }
         else
         {
             gameManager.addGravity();
-            Console.WriteLine("Masa del jugador aumentada");
+            Debug.Log("Gravedad del jugador aumentada");
         }
     }
 

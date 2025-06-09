@@ -33,8 +33,8 @@ public class PlayerScript : MonoBehaviour
         Sprite = GetComponent<SpriteRenderer>();
 
         // Mostrar controles m�viles solo en Android
-        //if (MobileControls != null)
-            //MobileControls.SetActive(Application.platform == RuntimePlatform.Android);
+        if (MobileControls != null)
+            MobileControls.SetActive(Application.platform == RuntimePlatform.Android);
     }
 
     // M�todos para EventTrigger
