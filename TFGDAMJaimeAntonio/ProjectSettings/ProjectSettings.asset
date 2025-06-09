@@ -849,11 +849,11 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: TFGDAMJaimeAntonio
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: 
+  metroCertificatePath: Assets/WSATestCertificate.pfx
   metroCertificatePassword: 
-  metroCertificateSubject: 
-  metroCertificateIssuer: 
-  metroCertificateNotAfter: 0000000000000000
+  metroCertificateSubject: Rotro
+  metroCertificateIssuer: Rotro
+  metroCertificateNotAfter: 80bf137065f8dc01
   metroApplicationDescription: TFGDAMJaimeAntonio
   wsaImages: {}
   metroTileShortName: TFGDAMJaimeAntonio
