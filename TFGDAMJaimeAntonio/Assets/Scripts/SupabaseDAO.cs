@@ -545,6 +545,38 @@ public class SupabaseDao : MonoBehaviour
             }
         }
     }
+    public IEnumerator SavePlayerScores(int points, int coins)
+    {
+        string url = $"https://bxjubueuyzobmpvdwefk.supabase.co/rest/v1/Player?id=eq.{PlayerLoggedIn.PlayerId}";
+        var body = new Dictionary<string, int>
+               {
+                   { "coins", coins },
+                   { "points", points }
+               };
+        string jsonData = JsonConvert.SerializeObject(body);
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "PATCH"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            request.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Prefer", "return=minimal");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Puntos y monedas del usuario actualizados correctamente.");
+            }
+            else
+            {
+                Debug.LogError("Error en PATCH: " + request.error + " - " + request.downloadHandler.text);
+            }
+        }
+    }
     class AuthResponse
     {
         public string access_token;

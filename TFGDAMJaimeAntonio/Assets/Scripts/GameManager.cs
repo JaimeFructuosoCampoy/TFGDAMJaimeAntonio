@@ -386,6 +386,7 @@ public class GameManager : MonoBehaviour
         //Implementar lógica de actualización de Monedas y Puntos aquí
         PlayerLoggedIn.Points += PointCount;
         PlayerLoggedIn.Coins += Player.GetComponent<PlayerScript>().Coins;
+        StartCoroutine(SupabaseDao.Instance.SavePlayerScores(PlayerLoggedIn.Points, PlayerLoggedIn.Coins));
         SceneManager.LoadScene("MenuScene");
     }
 
