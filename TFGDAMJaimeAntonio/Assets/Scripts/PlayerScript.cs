@@ -12,7 +12,7 @@ public class PlayerScript : MonoBehaviour
     private SpriteRenderer Sprite;
     private float MovementSpeed = 3.5f;
     public float JumpSpeed = 5f;
-    private int Coins = 0;
+    public int Coins = 0;
     public TMP_Text CoinsText;
 
     // Referencias a los botones m�viles

@@ -254,8 +254,8 @@ public class GameManager : MonoBehaviour
     {
         if (IsRandomUbicationCataclysm[cataclysm])
         {
-            float y = UnityEngine.Random.Range(-1f, 3f);
-            float x = UnityEngine.Random.Range(-4f, 4f);
+            float y = UnityEngine.Random.Range(-1f, 5f);
+            float x = UnityEngine.Random.Range(-8f, 8f);
             Vector3 vector = new Vector3(x, y, 0f);
             return vector;
         }
@@ -266,8 +266,8 @@ public class GameManager : MonoBehaviour
     {
         if (IsRandomUbicationEnemy[enemyType])
         {
-            float y = UnityEngine.Random.Range(-1f, 3f);
-            float x = UnityEngine.Random.Range(-4f, 4f);
+            float y = UnityEngine.Random.Range(-1f, 5f);
+            float x = UnityEngine.Random.Range(-8f, 8f);
             Vector3 vector = new Vector3(x, y, 0f);
             return vector;
         }
@@ -385,6 +385,7 @@ public class GameManager : MonoBehaviour
         GlobalData.GameOver = false;
         //Implementar lógica de actualización de Monedas y Puntos aquí
         PlayerLoggedIn.Points += PointCount;
+        PlayerLoggedIn.Coins += Player.GetComponent<PlayerScript>().Coins;
         SceneManager.LoadScene("MenuScene");
     }
 
