@@ -12,6 +12,7 @@ TagManager:
   - WallCheckLeft
   - WallCheckRight
   - Meteorite
+  - Mete-Helmet
   layers:
   - Default
   - TransparentFX

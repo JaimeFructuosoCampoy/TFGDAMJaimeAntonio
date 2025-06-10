@@ -29,6 +29,11 @@ public class GameManager : MonoBehaviour
     private Dictionary<int, bool> IsRandomUbicationEnemy;
     public GameObject[] EnemyObjects;
     private float TimeUntilNewEnemy;
+    public GameObject ItemMeteHelmetPrefab;
+    public GameObject ItemMetalUmbrellaPrefab;
+    private SpriteRenderer PlayerSpriteRenderer;
+    private SpriteRenderer ItemSpriteRenderer;
+    private GameObject EquipedItem;
 
     //Manager de IA
     public QuestionHandler questionHandler;
@@ -57,16 +62,23 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        GlobalData.GameOver = false;
         GameObject timerObject = new GameObject("TimerScript");
         Timer = timerObject.AddComponent<TimerScript>();
         Timer.SetTextReferences(SecondText, MinuteText, HourText);
+
     }
 
     void Start()
     {
+        CheckEquipedObject();
+        PlayerSpriteRenderer = Player.GetComponent<SpriteRenderer>();
+        if (PlayerLoggedIn.ItemEquiped != null)
+        {
+            ItemSpriteRenderer = EquipedItem.transform.Find("ItemImage").GetComponent<SpriteRenderer>();
+        }
         Time.timeScale = 0f; // Congelamos para la pregunta
 
-  
         questionHandler.onPopupClosed += StartGame;
 
         CataclysmIsNotRandomUbicationEnded = true;
@@ -85,10 +97,16 @@ public class GameManager : MonoBehaviour
             GameOverObject.transform.localScale = Vector3.zero;
     }
 
-    
+
     void Update()
     {
         CheckPause();
+
+        if (PlayerLoggedIn.ItemEquiped != null)
+        {
+            ItemSpriteRenderer.flipX = !PlayerSpriteRenderer.flipX;
+        }
+
         if (GlobalData.GameOver || IsPaused)
         {
             if (GlobalData.GameOver)
@@ -108,7 +126,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            //Reinicia el flag cuando el juego se reanuda
+            //Reinicia el flag cuando el juego se reanuda  
             gameOverShown = false;
 
             if (Timer.CheckUpdateCounts())
@@ -290,7 +308,7 @@ public class GameManager : MonoBehaviour
             Debug.Log(tsunamiTransform.position.y - tsunamiLimitPosition.y);
             yield return new WaitForEndOfFrame(); // espera al siguiente frame
         }
-        
+
         Debug.Log("Se ha llegado a la posición del tsunami");
 
         yield return new WaitForSeconds(5f);
@@ -307,7 +325,7 @@ public class GameManager : MonoBehaviour
             Debug.Log(tsunamiTransform.position.y - tsunamiStartPosition.y);
             yield return new WaitForEndOfFrame(); // espera al siguiente frame
         }
-        
+
         TsunamiLimit.transform.parent = Player.transform;
         TsunamiLimit.transform.position = new Vector3(0, Player.transform.position.y + 1f, 0);
         CataclysmIsNotRandomUbicationEnded = true;
@@ -324,8 +342,8 @@ public class GameManager : MonoBehaviour
         StartCoroutine(WaitUntilEnemy());
     }
 
-    public void addGravity() 
-    { 
+    public void addGravity()
+    {
         Player.GetComponent<Rigidbody2D>().gravityScale = 1.2f;
     }
 
@@ -348,7 +366,8 @@ public class GameManager : MonoBehaviour
         LeanTween.scale(PauseObject, new Vector3(0, 0, 0), 0.5f)
             .setEaseInBack()
             .setIgnoreTimeScale(true)
-            .setOnComplete(() => {
+            .setOnComplete(() =>
+            {
                 PauseObject.SetActive(false);
                 BackgroundQuit();
             });
@@ -375,13 +394,19 @@ public class GameManager : MonoBehaviour
         switch (equipedObject)
         {
             case "Mete-Helmet":
-                //Equipar casco
+                EquipedItem = Instantiate(ItemMeteHelmetPrefab, Player.transform);
+                EquipedItem.transform.localPosition = new Vector3(0.002f, 0.192f, 0);
+                EquipedItem.transform.localRotation = Quaternion.identity;
+                EquipedItem.transform.localScale = new Vector3(0.12f, 0.12f, 0.5357143f);
                 break;
             case "Metal Umbrella":
-                //Equipar paraguas
+                EquipedItem = Instantiate(ItemMetalUmbrellaPrefab, Player.transform);
                 break;
             case "Bouncing boots":
                 //Equipar botas
+                break;
+            default:
+                Debug.LogWarning("Objeto equipado no reconocido: " + equipedObject);
                 break;
         }
     }
