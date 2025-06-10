@@ -37,6 +37,20 @@ public class Gout : MonoBehaviour
                 if (transform.parent.parent != collision.collider.transform)
                     Destroy(gameObject);
                 break;
+
+            case "Player":
+                if (PlayerLoggedIn.ItemEquiped.name != "Metal Umbrella")
+                {
+                    GlobalData.GameOver = true;
+                }
+                else
+                {
+                    if (IsCloudGrandSon)
+                    {
+                        Destroy(gameObject);
+                    }
+                }
+                break;
         }
     }
 
