@@ -34,6 +34,11 @@ public class GameManager : MonoBehaviour
     private Dictionary<int, bool> IsRandomUbicationEnemy;
     public GameObject[] EnemyObjects;
     private float TimeUntilNewEnemy;
+    public GameObject ItemMeteHelmetPrefab;
+    public GameObject ItemMetalUmbrellaPrefab;
+    private SpriteRenderer PlayerSpriteRenderer;
+    private SpriteRenderer ItemSpriteRenderer;
+    private GameObject EquipedItem;
 
     //Manager de IA
     public QuestionHandler questionHandler;
@@ -71,10 +76,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-    
+        GlobalData.GameOver = false;
         GameObject timerObject = new GameObject("TimerScript");
         Timer = timerObject.AddComponent<TimerScript>();
         Timer.SetTextReferences(SecondText, MinuteText, HourText);
+
     }
 
     /// <summary>
@@ -83,7 +89,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-        Time.timeScale = 0f; //Congelamos para la pregunta
+        CheckEquipedObject();
+        Time.timeScale = 0f;
+        PlayerSpriteRenderer = Player.GetComponent<SpriteRenderer>();
+        if (PlayerLoggedIn.ItemEquiped != null)
+        {
+            ItemSpriteRenderer = EquipedItem.transform.Find("ItemImage").GetComponent<SpriteRenderer>();
+        }
+        Time.timeScale = 0f; // Congelamos para la pregunta
 
         questionHandler.onPopupClosed += StartGame;
 
@@ -111,6 +124,12 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         CheckPause();
+
+        if (PlayerLoggedIn.ItemEquiped != null)
+        {
+            ItemSpriteRenderer.flipX = !PlayerSpriteRenderer.flipX;
+        }
+
         if (GlobalData.GameOver || IsPaused)
         {
             if (GlobalData.GameOver)
@@ -130,7 +149,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            //Reinicia el flag cuando el juego se reanuda
+            //Reinicia el flag cuando el juego se reanuda  
             gameOverShown = false;
 
             if (Timer.CheckUpdateCounts())
@@ -290,8 +309,8 @@ public class GameManager : MonoBehaviour
     {
         if (IsRandomUbicationCataclysm[cataclysm])
         {
-            float y = UnityEngine.Random.Range(-1f, 3f);
-            float x = UnityEngine.Random.Range(-4f, 4f);
+            float y = UnityEngine.Random.Range(-1f, 5f);
+            float x = UnityEngine.Random.Range(-8f, 8f);
             Vector3 vector = new Vector3(x, y, 0f);
             return vector;
         }
@@ -307,8 +326,8 @@ public class GameManager : MonoBehaviour
     {
         if (IsRandomUbicationEnemy[enemyType])
         {
-            float y = UnityEngine.Random.Range(-1f, 3f);
-            float x = UnityEngine.Random.Range(-4f, 4f);
+            float y = UnityEngine.Random.Range(-1f, 5f);
+            float x = UnityEngine.Random.Range(-8f, 8f);
             Vector3 vector = new Vector3(x, y, 0f);
             return vector;
         }
@@ -358,8 +377,8 @@ public class GameManager : MonoBehaviour
             Debug.Log(tsunamiTransform.position.y - tsunamiLimitPosition.y);
             yield return new WaitForEndOfFrame(); // espera al siguiente frame
         }
-        
-        Debug.Log("Se ha llegado a la posicin del tsunami");
+
+        Debug.Log("Se ha llegado a la posici�n del tsunami");
 
         yield return new WaitForSeconds(5f);
 
@@ -375,7 +394,7 @@ public class GameManager : MonoBehaviour
             Debug.Log(tsunamiTransform.position.y - tsunamiStartPosition.y);
             yield return new WaitForEndOfFrame(); // espera al siguiente frame
         }
-        
+
         TsunamiLimit.transform.parent = Player.transform;
         TsunamiLimit.transform.position = new Vector3(0, Player.transform.position.y + 1f, 0);
         CataclysmIsNotRandomUbicationEnded = true;
@@ -429,7 +448,8 @@ public class GameManager : MonoBehaviour
         LeanTween.scale(PauseObject, new Vector3(0, 0, 0), 0.5f)
             .setEaseInBack()
             .setIgnoreTimeScale(true)
-            .setOnComplete(() => {
+            .setOnComplete(() =>
+            {
                 PauseObject.SetActive(false);
                 BackgroundQuit();
             });
@@ -453,6 +473,8 @@ public class GameManager : MonoBehaviour
         GlobalData.GameOver = false;
         //Implementar lgica de actualizacin de Monedas y Puntos aqu
         PlayerLoggedIn.Points += PointCount;
+        PlayerLoggedIn.Coins += Player.GetComponent<PlayerScript>().Coins;
+        StartCoroutine(SupabaseDao.Instance.SavePlayerScores(PlayerLoggedIn.Points, PlayerLoggedIn.Coins));
         SceneManager.LoadScene("MenuScene");
     }
 
@@ -465,13 +487,19 @@ public class GameManager : MonoBehaviour
         switch (equipedObject)
         {
             case "Mete-Helmet":
-                //Equipar casco
+                EquipedItem = Instantiate(ItemMeteHelmetPrefab, Player.transform);
+                EquipedItem.transform.localPosition = new Vector3(0.002f, 0.192f, 0);
+                EquipedItem.transform.localRotation = Quaternion.identity;
+                EquipedItem.transform.localScale = new Vector3(0.12f, 0.12f, 0.5357143f);
                 break;
             case "Metal Umbrella":
-                //Equipar paraguas
+                EquipedItem = Instantiate(ItemMetalUmbrellaPrefab, Player.transform);
                 break;
             case "Bouncing boots":
                 //Equipar botas
+                break;
+            default:
+                Debug.LogWarning("Objeto equipado no reconocido: " + equipedObject);
                 break;
         }
     }

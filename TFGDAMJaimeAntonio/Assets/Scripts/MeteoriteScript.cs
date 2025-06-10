@@ -14,5 +14,20 @@ public class MeteoriteScript : MonoBehaviour
             gameObject.GetComponent<Animator>().SetBool("ExplodeParam", true);
             StartCoroutine(GlobalFunctions.DestroyObjectAfterSeconds(TimeUntilDestroy, gameObject));
         }
+
+        if (collision.collider.CompareTag("Player"))
+        {
+            if (PlayerLoggedIn.ItemEquiped.name != "Mete-Helmet")
+            {
+                GlobalData.GameOver = true;
+            }
+            else
+            {
+                gameObject.GetComponent<Animator>().SetBool("ExplodeParam", true);
+                StartCoroutine(GlobalFunctions.DestroyObjectAfterSeconds(TimeUntilDestroy, gameObject));
+            }
+        }
     }
+
+
 }
