@@ -251,5 +251,6 @@ public class QuestionHandler : MonoBehaviour
     {
         ClosePopUpFeedback();
         ClosePopUpIA();
+        Time.timeScale = 1f;
     }
 }

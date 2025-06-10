@@ -87,10 +87,10 @@ public class GameManager : MonoBehaviour
     /// Método Start se llama antes de la primera actualización del frame.
     /// Inicializa el estado del juego, configura los listeners de los botones y congela el tiempo para la pregunta inicial.
     /// </summary>
-    void Start()
-    {
-        CheckEquipedObject();
+    void Start() 
+    { 
         Time.timeScale = 0f;
+        CheckEquipedObject();
         PlayerSpriteRenderer = Player.GetComponent<SpriteRenderer>();
         if (PlayerLoggedIn.ItemEquiped != null)
         {
