@@ -82,13 +82,13 @@ public class SupabaseDao : MonoBehaviour
         }
     }
 
-    public void SignUp(string email, string password, string name)
+    public void SignUp(string email, string password, string name, Action error, Action menu)
     {
         Debug.Log("1. " + name);
-        StartCoroutine(SignUpCoroutine(email, password, name));
+        StartCoroutine(SignUpCoroutine(email, password, name, error, menu));
     }
 
-    IEnumerator SignUpCoroutine(string email, string password, string userName)
+    IEnumerator SignUpCoroutine(string email, string password, string userName, Action error, Action menu)
     {
         string url = "https://bxjubueuyzobmpvdwefk.supabase.co/auth/v1/signup";
 
@@ -116,11 +116,13 @@ public class SupabaseDao : MonoBehaviour
 
                 Debug.Log(request.downloadHandler.text);
                 Debug.Log("2. " + userName);
-                StartCoroutine(SignUpLoginCoroutine(email, password, userName));
+                yield return StartCoroutine(SignUpLoginCoroutine(email, password, userName));
+                menu.Invoke();
             }
             else
             {
                 Debug.Log("Error: " + request.error + request.downloadHandler.text);
+                error.Invoke();
             }
         }
     }
@@ -215,14 +217,11 @@ public class SupabaseDao : MonoBehaviour
 
             if (webRequest.result == UnityWebRequest.Result.Success)
             {
-                PlayerLoggedIn.InitializeOrUpdatePlayerData(
-                    new PlayerData(
-                        response.id, name, playerInsert.created_at, 0, 0, 0
-                        )
-                    );
-                GlobalData.PlayerLoggedIn = true;
-                Debug.Log(name);
-                SceneManager.LoadScene("MenuScene");
+                AccessToken = null;
+                RefreshToken = null;
+                TokenExpirationTime = 0;
+                PlayerLoggedIn.ClearPlayerData();
+                SceneManager.LoadScene("LogInScene");
             }
             else
             {
