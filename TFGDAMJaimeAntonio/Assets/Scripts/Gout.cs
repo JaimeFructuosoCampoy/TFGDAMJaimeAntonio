@@ -39,16 +39,13 @@ public class Gout : MonoBehaviour
                 break;
 
             case "Player":
-                if (PlayerLoggedIn.ItemEquiped.name != "Metal Umbrella")
+                if (PlayerLoggedIn.ItemEquiped == null || PlayerLoggedIn.ItemEquiped.name != "Metal Umbrella")
                 {
                     GlobalData.GameOver = true;
                 }
                 else
                 {
-                    if (IsCloudGrandSon)
-                    {
-                        Destroy(gameObject);
-                    }
+                    Destroy(gameObject);
                 }
                 break;
         }

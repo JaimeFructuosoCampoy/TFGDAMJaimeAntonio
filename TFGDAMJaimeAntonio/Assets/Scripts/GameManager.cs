@@ -180,7 +180,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Oculta el menú de Game Over, desactiva el fondo negro y reinicia la escena actual.
     /// </summary>
-    private void HideGameOverMenuAndRestart()
+    public void HideGameOverMenuAndRestart()
     {
         BackgroundQuit();
         GlobalData.GameOver = false;
@@ -199,7 +199,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Cambia el estado de pausa del juego. Muestra u oculta el menú de pausa y ajusta la escala de tiempo.
     /// </summary>
-    private void SwitchPause()
+    public void SwitchPause()
     {
         IsPaused = !IsPaused;
         if (IsPaused)

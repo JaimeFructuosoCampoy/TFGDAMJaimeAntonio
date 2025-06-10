@@ -40,7 +40,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8965563502849176869}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -98,5 +98,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Gout: {fileID: 1531468959096057065, guid: 7ea93f6f60bfbd249b4dfe9ae9cea82b, type: 3}
-  Interval: 1.5
   StartRainTime: 0
+  MinIntervalValue: 0.5
+  MaxIntervalValue: 0.8
