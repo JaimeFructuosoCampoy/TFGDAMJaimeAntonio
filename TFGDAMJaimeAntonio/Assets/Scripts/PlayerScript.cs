@@ -116,6 +116,10 @@ public class PlayerScript : MonoBehaviour
                 if (PlayerLoggedIn.ItemEquiped.name != "Mete-Helmet")
                     GlobalData.GameOver = true;
                 break;
+            case "Gout":
+                if (PlayerLoggedIn.ItemEquiped.name != "Metal Umbrella")
+                    GlobalData.GameOver = true;
+                break;
         }
     }
 

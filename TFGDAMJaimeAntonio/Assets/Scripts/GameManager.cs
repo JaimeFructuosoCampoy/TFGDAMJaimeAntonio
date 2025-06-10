@@ -494,6 +494,9 @@ public class GameManager : MonoBehaviour
                 break;
             case "Metal Umbrella":
                 EquipedItem = Instantiate(ItemMetalUmbrellaPrefab, Player.transform);
+                EquipedItem.transform.localPosition = new Vector3(0f, 0.2f, 0);
+                EquipedItem.transform.localRotation = Quaternion.identity;
+                EquipedItem.transform.localScale = new Vector3(0.05f, 0.05f, 1f);
                 break;
             case "Bouncing boots":
                 //Equipar botas

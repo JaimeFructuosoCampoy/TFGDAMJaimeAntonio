@@ -13,11 +13,19 @@ public class InventoryManager : MonoBehaviour
     private string UrlImage;
     public Image CheckImage;
     public Button UnEquipObject;
+    private bool InventoryUpdated;
 
     void Start()
     {
+        InventoryUpdated = false;
+        StartCoroutine(InitializeInventory());
+    }
+
+    private IEnumerator InitializeInventory()
+    {
+        yield return StartCoroutine(GetInventoryOnInventoryManager());
         PlayerItems = PlayerLoggedIn.Inventory;
-        StartCoroutine(ShowInventory());
+        yield return StartCoroutine(ShowInventory());
     }
 
     // Update is called once per frame
@@ -123,5 +131,11 @@ public class InventoryManager : MonoBehaviour
     {
         PlayerLoggedIn.ItemEquiped = null;
         CheckImage.gameObject.SetActive(false);
+    }
+
+    private IEnumerator GetInventoryOnInventoryManager()
+    {
+        yield return StartCoroutine(SupabaseDao.Instance.GetInventoryIdCoroutine());
+        InventoryUpdated = true;
     }
 }
