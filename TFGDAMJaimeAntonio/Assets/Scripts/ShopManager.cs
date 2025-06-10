@@ -40,7 +40,7 @@ public class ShopManager : MonoBehaviour
     {
         ShopItemsGameObjects = new List<GameObject>();
         StartCoroutine(SupabaseDao.Instance.GetAllItems(GetItems));
-        UpdatePlayerCoinsDisplay(); // Añade esta línea
+        UpdatePlayerCoinsDisplay();
     }
 
     // Update is called once per frame
@@ -313,4 +313,5 @@ public class ShopManager : MonoBehaviour
             PlayerCoinsText.text = PlayerLoggedIn.Coins.ToString();
         }
     }
+
 }

@@ -35,17 +35,17 @@ public class SupabaseDao : MonoBehaviour
     //Hacer la petición a la API de Supabase para iniciar sesión y después
     //establecer en un script modelo de jugador los datos del jugador y en GlobalData
     //establecer el inicio de sesión
-    public void Login(string email, string password)
+    public void Login(string email, string password, Action error)
     {
         if (!string.IsNullOrEmpty(AccessToken) && !IsTokenExpired())
         {
             Debug.Log("El token aún es válido. No es necesario iniciar sesión nuevamente.");
             return;
         }
-        StartCoroutine(LoginCoroutine(email, password));
+        StartCoroutine(LoginCoroutine(email, password, error));
     }
 
-    IEnumerator LoginCoroutine(string email, string password)
+    IEnumerator LoginCoroutine(string email, string password, Action error)
     {
         string url = "https://bxjubueuyzobmpvdwefk.supabase.co/auth/v1/token?grant_type=password";
 
@@ -77,6 +77,7 @@ public class SupabaseDao : MonoBehaviour
             else
             {
                 Debug.Log("Error: " + request.error + request.downloadHandler.text);
+                error.Invoke();
             }
         }
     }
