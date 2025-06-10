@@ -22,32 +22,56 @@ public class InventoryButtonScript : MonoBehaviour
         print("Soy el objeto: " + Item.name);
     }
 
+    /// <summary>
+    /// Se ejecuta cuando el puntero del ratón entra en el área del botón.
+    /// Escala el botón para dar un efecto de resaltado.
+    /// </summary>
     public void OnPointerEnterButton()
     {
         LeanTween.scale(gameObject, new Vector3(1.1f, 1.1f, 1f), 0.2f).setEase(LeanTweenType.easeInOutSine);
     }
 
+    /// <summary>
+    /// Se ejecuta cuando el puntero del ratón sale del área del botón.
+    /// Restaura la escala original del botón.
+    /// </summary>
     public void OnPointerExitButton()
     {
         LeanTween.scale(gameObject, new Vector3(1f, 1f, 1f), 0.2f).setEase(LeanTweenType.easeInOutSine);
     }
 
+    /// <summary>
+    /// Establece si el jugador tiene este objeto equipado actualmente.
+    /// </summary>
     public void SetPlayerHasThisItemEquiped()
     {
         IsEquiped = PlayerLoggedIn.ItemEquiped == Item;
     }
 
+    /// <summary>
+    /// Devuelve si este objeto está equipado por el jugador.
+    /// </summary>
+    /// <returns>True si el objeto está equipado, false en caso contrario.</returns>
     public bool IsThisItemEquiped()
     {
         return IsEquiped;
     }
 
+    /// <summary>
+    /// Se ejecuta cuando se hace clic en el botón.
+    /// Establece este objeto como el objeto equipado por el jugador y actualiza la interfaz de usuario.
+    /// </summary>
     public void OnClickButton()
     {
         PlayerLoggedIn.ItemEquiped = Item;
         Manager.ShowEquipedItem(gameObject);
     }
 
+    /// <summary>
+    /// Corrutina para obtener la URL de la imagen del objeto desde la base de datos.
+    /// </summary>
+    /// <param name="onComplete">Acción a ejecutar cuando se completa la obtención de la URL, pasando la URL como parámetro.</param>
+    /// <returns>IEnumerator para la corrutina.</returns>
     public IEnumerator GetItemImageUrl(System.Action<string> onComplete)
     {
         if (Item == null || string.IsNullOrEmpty(Item.id))
@@ -76,7 +100,7 @@ public class InventoryButtonScript : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("No se encontr� url_image para el item.");
+                    Debug.LogWarning("No se encontr� url_image para el item.");
                     onComplete?.Invoke(null);
                 }
             }

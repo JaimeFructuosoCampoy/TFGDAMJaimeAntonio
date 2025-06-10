@@ -16,6 +16,9 @@ public class CloudScript : MonoBehaviour
         RigidBody = GetComponent<Rigidbody2D>();
     }
 
+    /// <summary>
+    /// Metodo para mover la nube de izquierda a derecha.
+    /// </summary>
     void FixedUpdate()
     {
         float direction = IsMovingRight ? 1.0f : -1.0f;
@@ -30,6 +33,9 @@ public class CloudScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Metodo para detectar colisiones con el muro y cambiar la dirección del movimiento.
+    /// </summary>
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.CompareTag("Wall"))

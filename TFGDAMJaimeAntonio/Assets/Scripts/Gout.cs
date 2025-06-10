@@ -9,6 +9,9 @@ public class Gout : MonoBehaviour
         transform.Translate(Vector2.down * Speed * Time.deltaTime);
     }
 
+    /// <summary>
+    /// Metodo para detectar colisiones de la gota con otros objetos.
+    /// </summary>
     private void OnCollisionEnter2D(Collision2D collision)
     {
         string collisionName = collision.collider.tag;
@@ -23,7 +26,7 @@ public class Gout : MonoBehaviour
                     {
                         Destroy(gameObject);
                     }
-                } 
+                }
                 else
                 {
                     Destroy(gameObject);

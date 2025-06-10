@@ -8,16 +8,21 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+
+    // Referencias a los componentes de texto de TMP para mostrar el tiempo
     public TMP_Text SecondText;
     public TMP_Text MinuteText;
     public TMP_Text HourText;
-
-
     private TimerScript Timer;
+
+    //Referencias puntuacion del juego
     private int PointCount = 0;
     public TMP_Text PointCountText;
     private int Level = 1;
-    private bool IsPaused = false;
+
+
+    //Variables de control del juego
+
     public GameObject TsunamiLimit;
     public GameObject[] CataclysmsObjects;
     private Dictionary<int, bool> IsRandomUbicationCataclysm;
@@ -35,6 +40,7 @@ public class GameManager : MonoBehaviour
 
     //PAUSA
     public Button ButtonPause;
+    private bool IsPaused = false;
     public GameObject PauseObject;
     public Button ButtonContinue;
 
@@ -43,30 +49,42 @@ public class GameManager : MonoBehaviour
     public Button ButtonPlayAgain;
     private bool gameOverShown = false;
 
+    //Panel negro de fondo para los popups
     public GameObject backBlack;
 
+    //Cataclysmos posibles
     private enum Cataclysms
     {
         CLOUD_RAIN, METEORITE, TSUNAMI, SPIKES, BLACK_HOLE
     }
 
+    //Enmigos posibles
     private enum Enemies
     {
         BASIC, FLYING, SHOOT
     }
+    
 
+    /// <summary>
+    /// Método Awake se llama cuando la instancia del script está siendo cargada.
+    /// Inicializa el componente TimerScript.
+    /// </summary>
     private void Awake()
     {
+    
         GameObject timerObject = new GameObject("TimerScript");
         Timer = timerObject.AddComponent<TimerScript>();
         Timer.SetTextReferences(SecondText, MinuteText, HourText);
     }
 
+    /// <summary>
+    /// Método Start se llama antes de la primera actualización del frame.
+    /// Inicializa el estado del juego, configura los listeners de los botones y congela el tiempo para la pregunta inicial.
+    /// </summary>
     void Start()
     {
-        Time.timeScale = 0f; // Congelamos para la pregunta
+        Time.timeScale = 0f; //Congelamos para la pregunta
 
-  
         questionHandler.onPopupClosed += StartGame;
 
         CataclysmIsNotRandomUbicationEnded = true;
@@ -80,12 +98,16 @@ public class GameManager : MonoBehaviour
         if (ButtonPlayAgain != null)
             ButtonPlayAgain.onClick.AddListener(HideGameOverMenuAndRestart);
 
-        // Solo aseguramos la escala, NO desactivamos el objeto
+        //Solo aseguramos la escala
         if (GameOverObject != null)
             GameOverObject.transform.localScale = Vector3.zero;
     }
 
     
+    /// <summary>
+    /// Método Update se llama una vez por frame.
+    /// Gestiona el estado de pausa y game over, y actualiza los puntos si el juego está en curso.
+    /// </summary>
     void Update()
     {
         CheckPause();
@@ -121,18 +143,24 @@ public class GameManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Muestra el menú de Game Over con una animación.
+    /// </summary>
     private void ShowGameOverMenu()
     {
         backBlack.SetActive(true);
-        LeanTween.cancel(GameOverObject); // Cancela cualquier animaci�n previa pendiente  
+        LeanTween.cancel(GameOverObject); //Cancela cualquier animación previa pendiente  
         GameOverObject.transform.localScale = Vector3.zero;
         GameOverObject.SetActive(true);
-        LeanTween.scale(GameOverObject, new Vector3(1f, 1f, 1), 0.5f) // Corregido: Se agreg� "new" antes de Vector3 y se usaron sufijos 'f' para los valores flotantes  
+        LeanTween.scale(GameOverObject, new Vector3(1f, 1f, 1), 0.5f) 
             .setEaseOutBack()
             .setIgnoreTimeScale(true);
         Debug.Log("Mostrando GameOver");
     }
 
+    /// <summary>
+    /// Oculta el menú de Game Over, desactiva el fondo negro y reinicia la escena actual.
+    /// </summary>
     private void HideGameOverMenuAndRestart()
     {
         BackgroundQuit();
@@ -140,12 +168,18 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    /// <summary>
+    /// Incrementa el contador de puntos y actualiza el texto en la interfaz de usuario.
+    /// </summary>
     private void UpdatePointCount()
     {
         PointCount++;
         PointCountText.SetText(PointCount.ToString());
     }
 
+    /// <summary>
+    /// Cambia el estado de pausa del juego. Muestra u oculta el menú de pausa y ajusta la escala de tiempo.
+    /// </summary>
     private void SwitchPause()
     {
         IsPaused = !IsPaused;
@@ -161,6 +195,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Comprueba si se ha presionado la tecla de pausa (P) y si el juego no ha terminado para cambiar el estado de pausa.
+    /// </summary>
     private void CheckPause()
     {
         if (Input.GetKeyDown(KeyCode.P) && !GlobalData.GameOver)
@@ -169,27 +206,36 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Corrutina que espera un tiempo aleatorio antes de iniciar un nuevo cataclismo.
+    /// </summary>
     IEnumerator WaitUntilCataclysm()
     {
         while (true)
         {
             TimeUntilNewCataclysm = UnityEngine.Random.Range(5f, 30f);
-            Debug.Log("Se esperar�n " + TimeUntilNewCataclysm + " segundos para ejecutar el siguiente cataclismo");
+            Debug.Log("Se esperarn " + TimeUntilNewCataclysm + " segundos para ejecutar el siguiente cataclismo");
             yield return new WaitForSeconds(TimeUntilNewCataclysm);
             StartCoroutine(SelectAndStartCataclysm());
         }
     }
+    /// <summary>
+    /// Corrutina que espera un tiempo aleatorio antes de generar un nuevo enemigo.
+    /// </summary>
     IEnumerator WaitUntilEnemy()
     {
         while (true)
         {
             TimeUntilNewEnemy = UnityEngine.Random.Range(3f, 15f);
-            Debug.Log("Se esperar�n " + TimeUntilNewEnemy + " segundos para generar un nuevo enemigo");
+            Debug.Log("Se esperarn " + TimeUntilNewEnemy + " segundos para generar un nuevo enemigo");
             yield return new WaitForSeconds(TimeUntilNewEnemy);
             StartCoroutine(SelectAndSpawnEnemy());
         }
     }
 
+    /// <summary>
+    /// Corrutina que selecciona un cataclismo aleatorio, determina su ubicación, lo instancia y programa su destrucción.
+    /// </summary>
     IEnumerator SelectAndStartCataclysm()
     {
         int cataclysm = UnityEngine.Random.Range(0, 3);
@@ -201,7 +247,7 @@ public class GameManager : MonoBehaviour
             {
                 GameObject instance = Instantiate(CataclysmsObjects[cataclysm], (Vector3)v, Quaternion.identity);
                 int secondsUntilDestroy = UnityEngine.Random.Range(0, 30); //Hay que convertir estos valores en atributos
-                Debug.Log("El cataclismo " + (Cataclysms)cataclysm + " ser� destruido en " + secondsUntilDestroy);
+                Debug.Log("El cataclismo " + (Cataclysms)cataclysm + " ser destruido en " + secondsUntilDestroy);
                 yield return new WaitForSeconds(secondsUntilDestroy);
                 Destroy(instance);
             }
@@ -217,6 +263,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Corrutina que selecciona un tipo de enemigo aleatorio, determina su posición de aparición, lo instancia y programa su destrucción.
+    /// </summary>
     IEnumerator SelectAndSpawnEnemy()
     {
         int enemyType = UnityEngine.Random.Range(0, EnemyObjects.Length);
@@ -226,12 +275,17 @@ public class GameManager : MonoBehaviour
         {
             GameObject instance = Instantiate(EnemyObjects[enemyType], (Vector3)spawnPosition, Quaternion.identity);
             int secondsUntilDestroy = UnityEngine.Random.Range(10, 60);
-            Debug.Log("El enemigo " + (Enemies)enemyType + " ser� destruido en " + secondsUntilDestroy + " segundos");
+            Debug.Log("El enemigo " + (Enemies)enemyType + " ser destruido en " + secondsUntilDestroy + " segundos");
             yield return new WaitForSeconds(secondsUntilDestroy);
             Destroy(instance);
         }
     }
 
+    /// <summary>
+    /// Selecciona una ubicación para el cataclismo. Devuelve una posición aleatoria si el cataclismo lo permite, o null si tiene una ubicación fija.
+    /// </summary>
+    /// <param name="cataclysm">El índice del tipo de cataclismo.</param>
+    /// <returns>Un Vector3 con la posición o null.</returns>
     private Vector3? SelectCataclysmUbication(int cataclysm)
     {
         if (IsRandomUbicationCataclysm[cataclysm])
@@ -244,6 +298,11 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Selecciona una ubicación para el enemigo. Devuelve una posición aleatoria si el enemigo lo permite, o null si tiene una ubicación fija.
+    /// </summary>
+    /// <param name="enemyType">El índice del tipo de enemigo.</param>
+    /// <returns>Un Vector3 con la posición o null.</returns>
     private Vector3? SelectEnemyUbication(int enemyType)
     {
         if (IsRandomUbicationEnemy[enemyType])
@@ -256,6 +315,9 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Inicializa el diccionario que determina si la ubicación de cada cataclismo es aleatoria o predefinida.
+    /// </summary>
     private void InitializeKeyValueCataclysmUbication()
     {
         IsRandomUbicationCataclysm = new Dictionary<int, bool>();
@@ -264,6 +326,9 @@ public class GameManager : MonoBehaviour
         IsRandomUbicationCataclysm.Add(2, false);
     }
 
+    /// <summary>
+    /// Inicializa el diccionario que determina si la ubicación de aparición de cada enemigo es aleatoria o predefinida.
+    /// </summary>
     private void InitializeKeyValueEnemyUbication()
     {
         IsRandomUbicationEnemy = new Dictionary<int, bool>();
@@ -271,6 +336,9 @@ public class GameManager : MonoBehaviour
         IsRandomUbicationEnemy.Add(1, true); // FLYING  
     }
 
+    /// <summary>
+    /// Corrutina que ejecuta el cataclismo del tsunami, controlando su movimiento hacia un límite y su posterior retroceso.
+    /// </summary>
     IEnumerator ExecuteTsunamiCataclysm()
     {
         CataclysmIsNotRandomUbicationEnded = false;
@@ -291,11 +359,11 @@ public class GameManager : MonoBehaviour
             yield return new WaitForEndOfFrame(); // espera al siguiente frame
         }
         
-        Debug.Log("Se ha llegado a la posici�n del tsunami");
+        Debug.Log("Se ha llegado a la posicin del tsunami");
 
         yield return new WaitForSeconds(5f);
 
-        Debug.Log("Se ha comenzado a mover el tsunami hacia la posici�n inicial");
+        Debug.Log("Se ha comenzado a mover el tsunami hacia la posicin inicial");
 
         while (tsunamiTransform.position.y != tsunamiStartPosition.y)
         {
@@ -314,7 +382,8 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// M�todo que se llama cuando el popup de la IA se cierra.
+    /// Mtodo que se llama cuando el popup de la IA se cierra.
+    /// Reanuda el tiempo y comienza las corrutinas del juego para cataclismos y enemigos.
     /// </summary>
     private void StartGame()
     {
@@ -324,16 +393,25 @@ public class GameManager : MonoBehaviour
         StartCoroutine(WaitUntilEnemy());
     }
 
+    /// <summary>
+    /// Aumenta la escala de gravedad del Rigidbody2D del jugador.
+    /// </summary>
     public void addGravity() 
     { 
         Player.GetComponent<Rigidbody2D>().gravityScale = 1.2f;
     }
 
+    /// <summary>
+    /// Reduce la escala de gravedad del Rigidbody2D del jugador.
+    /// </summary>
     public void removeGravity()
     {
         Player.GetComponent<Rigidbody2D>().gravityScale = 0.8f;
     }
 
+    /// <summary>
+    /// Muestra el menú de pausa con una animación.
+    /// </summary>
     private void ShowPauseMenu()
     {
         backBlack.SetActive(true);
@@ -343,6 +421,9 @@ public class GameManager : MonoBehaviour
             .setIgnoreTimeScale(true);
     }
 
+    /// <summary>
+    /// Oculta el menú de pausa con una animación y desactiva el objeto del menú de pausa.
+    /// </summary>
     private void HidePauseMenu()
     {
         LeanTween.scale(PauseObject, new Vector3(0, 0, 0), 0.5f)
@@ -354,21 +435,30 @@ public class GameManager : MonoBehaviour
             });
     }
 
+    /// <summary>
+    /// Desactiva el panel de fondo negro utilizado para los popups.
+    /// </summary>
     public void BackgroundQuit()
     {
         backBlack.SetActive(false);
     }
 
+    /// <summary>
+    /// Restablece el tiempo a la normalidad, actualiza los puntos del jugador y carga la escena del menú principal.
+    /// </summary>
     public void ReturnToMenu()
     {
         //Volver a poner el tiempo en normal
         Time.timeScale = 1f;
         GlobalData.GameOver = false;
-        //Implementar l�gica de actualizaci�n de Monedas y Puntos aqu�
+        //Implementar lgica de actualizacin de Monedas y Puntos aqu
         PlayerLoggedIn.Points += PointCount;
         SceneManager.LoadScene("MenuScene");
     }
 
+    /// <summary>
+    /// Comprueba el objeto equipado por el jugador y aplica la lógica correspondiente.
+    /// </summary>
     public void CheckEquipedObject()
     {
         string equipedObject = PlayerLoggedIn.ItemEquiped.name;

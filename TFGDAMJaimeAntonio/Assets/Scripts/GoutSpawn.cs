@@ -35,7 +35,9 @@ public class GoutSpawn : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Metodo para iniciar la lluvia.
+    /// /// </summary>
     public void StartRain()
     {
         if (!IsRaining)
@@ -45,7 +47,9 @@ public class GoutSpawn : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Metodo para detener la lluvia.
+    /// /// </summary>
 
     public void StopRain()
     {
@@ -57,6 +61,11 @@ public class GoutSpawn : MonoBehaviour
         }
     }
 
+
+
+    /// <summary>
+    /// Metodo para iniciar la lluvia de gotas, con un intervalo aleatorio entre gotas.
+    /// /// </summary>
     IEnumerator SpawnGout()
     {
         while (true)

@@ -33,6 +33,11 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Corrutina que muestra los objetos del inventario del jugador.
+    /// Instancia los prefabs de los objetos, establece sus datos e imágenes.
+    /// Muestra una marca de verificación en el objeto actualmente equipado.
+    /// </summary>
     IEnumerator ShowInventory()
     {
         if (PlayerItems == null || PlayerItems.Count == 0)
@@ -68,6 +73,13 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Corrutina que carga una textura desde una URL y la convierte en un Sprite.
+    /// </summary>
+    /// <param name="url">La URL de la imagen a cargar.</param>
+    /// <param name="image">El componente Image donde se mostrará el Sprite.</param>
+    /// <param name="onComplete">Acción a ejecutar cuando se completa la carga, pasando el Sprite y el Image como parámetros.</param>
+    /// <returns>IEnumerator para la corrutina.</returns>
     private IEnumerator LoadSpriteFromURL(string url, Image image, System.Action<Sprite, Image> onComplete)
     {
         using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))

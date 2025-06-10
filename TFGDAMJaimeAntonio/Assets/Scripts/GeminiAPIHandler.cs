@@ -4,7 +4,7 @@ using System.Collections;
 
 public class GeminiAPIHandler : MonoBehaviour
 {
-    //IMPORTANTE: La API Key no debe ser expuesta en el código fuente.
+    //IMPORTANTE: La API Key no debe ser expuesta en el cÃ³digo fuente.
     [SerializeField]
     private string apiKey;
 
@@ -14,28 +14,28 @@ public class GeminiAPIHandler : MonoBehaviour
     [System.Serializable]
     private class GeminiResponse
     {
-        public Candidate[] candidates; // Lista de candidatos generados por la IA.
+        public Candidate[] candidates; //Lista de candidatos generados por la IA.
     }
 
     [System.Serializable]
     private class Candidate
     {
-        public Content content; // Contenido generado por la IA.
+        public Content content; //Contenido generado por la IA.
     }
 
     [System.Serializable]
     private class Content
     {
-        public Part[] parts; // Partes del contenido generado.
+        public Part[] parts; //Partes del contenido generado.
     }
 
     [System.Serializable]
     private class Part
     {
-        public string text; // Texto generado por la IA.
+        public string text; //Texto generado por la IA.
     }
 
-    //Método para enviar una consulta a la API. Recibe una consulta del usuario y un callback para manejar la respuesta.
+    //MÃ©todo para enviar una consulta a la API. Recibe una consulta del usuario y un callback para manejar la respuesta.
     public void SendQueryToGemini(string userQuery, System.Action<string> callback)
     {
         StartCoroutine(PostRequest(userQuery, callback)); //Llama a la corrutina para enviar la solicitud.
@@ -61,7 +61,7 @@ public class GeminiAPIHandler : MonoBehaviour
            ]  
        }}";
 
-        //Configuración de la solicitud HTTP POST.
+        //ConfiguraciÃ³n de la solicitud HTTP POST.
         using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
         {
             //Convierte el JSON a un arreglo de bytes y lo asigna al cuerpo de la solicitud.
@@ -92,7 +92,7 @@ public class GeminiAPIHandler : MonoBehaviour
                     string responseText = responseData?.candidates?[0]?.content?.parts?[0]?.text;
 
                     //Llama al callback con el texto generado o un mensaje predeterminado si no hay respuesta.
-                    callback?.Invoke(responseText ?? "No se recibió respuesta clara.");
+                    callback?.Invoke(responseText ?? "No se recibiï¿½ respuesta clara.");
                 }
                 catch (System.Exception e)
                 {

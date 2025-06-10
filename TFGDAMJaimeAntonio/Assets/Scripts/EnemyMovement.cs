@@ -19,13 +19,19 @@ public class EnemyMovement : MonoBehaviour
         ComprobarDireccion();
     }
 
-    //Detecta colisiones con otros objetos
+    /// <summary>
+    /// Metodo para detectar colisiones con el muro y cambiar la dirección del movimiento.
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag.Equals("Wall"))
             MovingRight = !MovingRight;
     }
 
+    /// <summary>
+    /// Metodo para comprobar la dirección del movimiento y actualizar la velocidad del Rigidbody.
+    /// </summary>
     private void ComprobarDireccion()
     {
         if (MovingRight)

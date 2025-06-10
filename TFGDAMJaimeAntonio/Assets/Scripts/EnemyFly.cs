@@ -16,6 +16,9 @@ public class EnemyFly : MonoBehaviour
         EnemySprite = GetComponent<SpriteRenderer>();
     }
 
+    /// <summary>
+    /// Metodo para mover al enemigo de izquierda a derecha.
+    /// </summary>
     void Update()
     {
         float direction = IsMovingRight ? 1f : -1f;
