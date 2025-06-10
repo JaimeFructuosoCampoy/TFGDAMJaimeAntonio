@@ -15,6 +15,7 @@ public class SupabaseDao : MonoBehaviour
     private string RefreshToken;
     private long TokenExpirationTime;
 
+    private int test;
     void Awake()
     {
         if (instance != null && instance != this)
