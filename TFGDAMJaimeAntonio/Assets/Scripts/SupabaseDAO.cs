@@ -577,6 +577,32 @@ public class SupabaseDao : MonoBehaviour
             }
         }
     }
+    public IEnumerator LogOutUser()
+    {
+        string url = "https://bxjubueuyzobmpvdwefk.supabase.co/auth/v1/logout";
+        
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("apikey", GlobalData.SUPABASE_DB_KEY);
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Logout realizado correctamente.");
+                AccessToken = null;
+                RefreshToken = null;
+                TokenExpirationTime = 0;
+            }
+            else
+            {
+                Debug.LogError("Error al hacer logout: " + request.error + " - " + request.downloadHandler.text);
+            }
+        }
+    }
     class AuthResponse
     {
         public string access_token;

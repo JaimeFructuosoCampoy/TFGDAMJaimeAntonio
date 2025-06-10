@@ -180,4 +180,16 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    public IEnumerator LogOutCoroutine()
+    {
+        PlayerLoggedIn.ClearPlayerData();
+        GlobalData.PlayerLoggedIn = false;
+        yield return StartCoroutine(SupabaseDao.Instance.LogOutUser());
+        SceneManager.LoadScene("MenuScene");
+    }
+
+    public void LogOut()
+    {
+        StartCoroutine(LogOutCoroutine());
+    }
 }
