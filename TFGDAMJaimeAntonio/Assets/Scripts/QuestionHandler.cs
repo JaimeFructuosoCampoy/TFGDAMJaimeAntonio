@@ -7,12 +7,12 @@ public class QuestionHandler : MonoBehaviour
 {
     public GeminiAPIHandler geminiHandler;
 
-    public TMP_Text questionText; // Texto donde se mostrar· la pregunta generada.
+    public TMP_Text questionText; // Texto donde se mostrar√° la pregunta generada.
     public Button[] answerButtons; // Arreglo de botones para las opciones de respuesta (A, B, C, D).
-    public Button closeFeedbackButton; // BotÛn para cerrar el popup de feedback.
+    public Button closeFeedbackButton; // Bot√≥n para cerrar el popup de feedback.
 
     private string correctAnswer; // Almacena la respuesta correcta de la pregunta actual.
-    private bool awaitingAnswer = false; // Indica si se est· esperando una respuesta de la API.
+    private bool awaitingAnswer = false; // Indica si se est√° esperando una respuesta de la API.
 
     public GameObject popUpIA; // Popup que muestra la pregunta generada por la IA.
     public GameObject backBlack;
@@ -24,7 +24,7 @@ public class QuestionHandler : MonoBehaviour
     public GameManager gameManager;
     private string[] currentAnswerOptions = new string[4];
 
-    // Lista de temas especÌficos para las preguntas.
+    // Lista de temas espec√≠ficos para las preguntas.
     private string[] topics = { "lluvia", "meteoritos", "tsunamis, animales, planeta tierra" };
 
     void Start()
@@ -32,11 +32,11 @@ public class QuestionHandler : MonoBehaviour
         // Configurar los listeners de los botones de respuesta.
         for (int i = 0; i < answerButtons.Length; i++)
         {
-            int index = i; // Capturar el Ìndice del botÛn actual.
+            int index = i; // Capturar el √≠ndice del bot√≥n actual.
             answerButtons[i].onClick.AddListener(() => OnAnswerButtonClicked(index));
         }
 
-        // Configurar el listener del botÛn de cerrar feedback.
+        // Configurar el listener del bot√≥n de cerrar feedback.
         closeFeedbackButton.onClick.AddListener(CloseAllPopUps);
 
 
@@ -47,7 +47,7 @@ public class QuestionHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// MÈtodo para solicitar una nueva pregunta a la API.
+    /// M√©todo para solicitar una nueva pregunta a la API.
     /// </summary>
     void AskNewQuestion()
     {
@@ -57,11 +57,11 @@ public class QuestionHandler : MonoBehaviour
             string randomTopic = topics[UnityEngine.Random.Range(0, topics.Length)];
 
             // Generar la consulta con el tema seleccionado.
-            string query = $"Hazme una pregunta sencilla menos de 80 caracteres y corta sobre {randomTopic} con cuatro opciones de respuesta. Formatea la pregunta incluyendo las opciones A, B, C y D. Indica claramente cu·l es la respuesta correcta al final, precedida por 'Respuesta correcta:'.";
+            string query = $"Hazme una pregunta sencilla menos de 80 caracteres y corta sobre {randomTopic} con cuatro opciones de respuesta. Formatea la pregunta incluyendo las opciones A, B, C y D. Indica claramente cuÔøΩl es la respuesta correcta al final, precedida por 'Respuesta correcta:'.";
 
             // Mostrar un mensaje temporal mientras se espera la respuesta.
             questionText.text = "Pensando...";
-            awaitingAnswer = true; // Indicar que se est· esperando una respuesta de la API.
+            awaitingAnswer = true; // Indicar que se est√° esperando una respuesta de la API.
 
             // Enviar la consulta a la API.
             geminiHandler.SendQueryToGemini(query, HandleAIResponse);
@@ -75,16 +75,9 @@ public class QuestionHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// MÈtodo para manejar la respuesta de la API.
+    /// M√©todo para manejar la respuesta de la API.
     /// </summary>
     /// <param name="aiResponse"></param>
-    /// <summary>
-    /// MÈtodo para manejar la respuesta de la API.
-    /// </summary>
-    /// <param name="aiResponse"></param>
-    /// <summary>
-    /// MÈtodo para manejar la respuesta de la API.
-    /// </summary>
     void HandleAIResponse(string aiResponse)
     {
         Debug.Log("RESPUESTA COMPLETA DE LA API: " + aiResponse);
@@ -101,7 +94,7 @@ public class QuestionHandler : MonoBehaviour
 
             Debug.Log("VALOR GUARDADO EN 'correctAnswer': " + correctAnswer);
 
-            // --- NUEVA L”GICA DE PROCESAMIENTO ---
+            // L√ìGICA DE PROCESAMIENTO ---
             // Ahora procesamos las opciones y las guardamos en nuestro array
             string[] lines = questionWithOptions.Split('\n');
             foreach (string line in lines)
@@ -111,7 +104,7 @@ public class QuestionHandler : MonoBehaviour
                 else if (line.Trim().StartsWith("C)")) currentAnswerOptions[2] = line.Trim();
                 else if (line.Trim().StartsWith("D)")) currentAnswerOptions[3] = line.Trim();
             }
-            // --- FIN DE LA NUEVA L”GICA ---
+            // --- FIN DE LA L√ìGICA ---
 
             questionText.text = questionWithOptions;
 
@@ -130,14 +123,14 @@ public class QuestionHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// MÈtodo que se ejecuta al hacer clic en un botÛn de respuesta.
+    /// M√©todo que se ejecuta al hacer clic en un bot√≥n de respuesta.
     /// </summary>
     void OnAnswerButtonClicked(int buttonIndex)
     {
         string userAnswerLetter = ((char)('A' + buttonIndex)).ToString();
         bool isCorrect = userAnswerLetter == correctAnswer;
 
-        // --- L”GICA SIMPLIFICADA ---
+        // --- L√ìGICA SIMPLIFICADA ---
         // Ahora leemos los textos directamente desde nuestro array, no desde la UI
 
         // 1. Obtenemos el texto completo de la respuesta del usuario desde nuestro array.
@@ -147,18 +140,18 @@ public class QuestionHandler : MonoBehaviour
         int correctIndex = correctAnswer[0] - 'A';
         string correctAnswerText = currentAnswerOptions[correctIndex];
 
-        // --- FIN DE LA L”GICA SIMPLIFICADA ---
+        // --- FIN DE LA L√ìGICA SIMPLIFICADA ---
 
         // 3. Construimos el feedback
         string feedback = $"Respuesta correcta: {correctAnswerText}";
 
         if (isCorrect)
         {
-            feedback += "\n\n°Correcto! La gravedad ser· un poco menor por lo que..\n °°SALTARAS M·S!!";
+            feedback += "\n\n¬°Correcto! La gravedad ser√° un poco menor por lo que..\n ¬°SALTAR√ÅS M√ÅS!!";
         }
         else
         {
-            feedback += "\n\n°Incorrecto! La gravedad ser· un poco mayor por lo que..\n Saltaras menos..";
+            feedback += "\n\n¬°Incorrecto! La gravedad ser√° un poco mayor por lo que..\n Saltar√°s menos..";
         }
 
         popUpFeedbackText.text = feedback;
@@ -182,24 +175,24 @@ public class QuestionHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// MÈtodo para abrir el popup.
+    /// M√©todo para abrir el popup.
     /// </summary>
     private void OpenPopUpFeedback()
     {
-        Debug.Log("Intentando abrir el popup de feedback."); // DepuraciÛn
+        Debug.Log("Intentando abrir el popup de feedback."); // Depuraci√≥n
         PopUpFeedback.SetActive(true);
 
         PopUpFeedback.transform.localScale = new Vector3(0, 0, 0); // Reinicia la escala
         LeanTween.scale(PopUpFeedback, new Vector3(1f, 1f, 1), 0.5f)
             .setEaseOutBack()
             .setIgnoreTimeScale(true); // Ignorar Time.timeScale
-        Debug.Log("Popup de feedback mostrado."); // DepuraciÛn
+        Debug.Log("Popup de feedback mostrado."); // Depuraci√≥n
     }
 
 
 
     /// <summary>
-    /// MÈtodo para cerrar el popup.
+    /// M√©todo para cerrar el popup.
     /// </summary>
     private void ClosePopUpIA()
     {
@@ -210,30 +203,36 @@ public class QuestionHandler : MonoBehaviour
             {
                 popUpIA.SetActive(false);
                 onPopupClosed?.Invoke();
-                backBlack.SetActive(false); // <-- AquÌ, despuÈs de la animaciÛn
+                backBlack.SetActive(false); // <-- Aqu√≠, despu√©s de la animaci√≥n
             });
     }
 
+    /// <summary>
+    /// M√©todo para abrir el popup principal (popUpIA).
+    /// </summary>
     private void OpenPopUpIA()
     {
-        Debug.Log("Intentando abrir el popup principal (popUpIA)..."); // DepuraciÛn
+        Debug.Log("Intentando abrir el popup principal (popUpIA)..."); // Depuraci√≥n
 
         backBlack.SetActive(true);
 
         // Reinicia la escala del popup a (0, 0, 0)
         popUpIA.transform.localScale = new Vector3(0, 0, 0);
-        popUpIA.SetActive(true); // Aseg˙rate de que el popup estÈ activo
+        popUpIA.SetActive(true); // Aseg√∫rate de que el popup est√© activo
 
-        //Escala el popup a (1, 1, 1) con animaciÛn
+        //Escala el popup a (1, 1, 1) con animaci√≥n
         LeanTween.scale(popUpIA, new Vector3(1f, 1f, 1), 1f)
             .setEaseOutBack()
             .setIgnoreTimeScale(true); // Ignorar Time.timeScale
-        Debug.Log("Popup principal (popUpIA) mostrado."); // DepuraciÛn
+        Debug.Log("Popup principal (popUpIA) mostrado."); // Depuraci√≥n
     }
 
+    /// <summary>
+    /// M√©todo para cerrar el popup de feedback.
+    /// </summary>
     private void ClosePopUpFeedback()
     {
-        Debug.Log("Intentando cerrar el popup de feedback."); // DepuraciÛn
+        Debug.Log("Intentando cerrar el popup de feedback."); // Depuraci√≥n
 
         LeanTween.scale(PopUpFeedback, new Vector3(0, 0, 0), 0.5f)
             .setEaseInBack()
@@ -245,6 +244,9 @@ public class QuestionHandler : MonoBehaviour
             });
     }
 
+    /// <summary>
+    /// M√©todo para cerrar todos los popups abiertos.
+    /// </summary>
     private void CloseAllPopUps()
     {
         ClosePopUpFeedback();

@@ -12,7 +12,7 @@ public class MeteoroScript : MonoBehaviour
         if (collision.collider.CompareTag("Ground"))
         {
             GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            Destroy(explosion, delayExplosion); //Destruye la explosión
+            Destroy(explosion, delayExplosion); //Destruye la explosiÃ³n
             Destroy(gameObject);// Destruye el meteorito
         }
     }

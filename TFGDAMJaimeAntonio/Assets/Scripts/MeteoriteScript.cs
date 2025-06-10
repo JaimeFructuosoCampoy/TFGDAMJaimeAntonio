@@ -7,13 +7,18 @@ public class MeteoriteScript : MonoBehaviour
     public float DelayExplosion = 1f;
     public float TimeUntilDestroy = 1f;
 
+    /// <summary>
+    /// Controla la colisi√≥n del meteorito con el suelo o el jugador.
+    /// Si colisiona con el suelo, inicia la animaci√≥n de explosi√≥n y destruye el objeto despu√©s de un tiempo.
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.CompareTag("Ground"))
         {
             gameObject.GetComponent<Animator>().SetBool("ExplodeParam", true);
             StartCoroutine(GlobalFunctions.DestroyObjectAfterSeconds(TimeUntilDestroy, gameObject));
-  ††††††}
+        }
 
         if (collision.collider.CompareTag("Player"))
         {

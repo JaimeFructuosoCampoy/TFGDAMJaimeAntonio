@@ -108,8 +108,8 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Método público para el botón de Ajustes y el botón de Volver.
-    /// Abre o cierra el menú de ajustes.
+    /// Metodo pÃºblico para el botÃ³n de Ajustes y el botÃ³n de Volver.
+    /// Abre o cierra el menÃº de ajustes.
     /// </summary>
     public void ToggleSettingsPopUp()
     {
@@ -128,12 +128,12 @@ public class MenuManager : MonoBehaviour
         backBlack.SetActive(true);
         SettingsPopUp.SetActive(true);
 
-        // Reseteamos la escala a 0 para que la animación siempre funcione bien
+        // Reseteamos la escala a 0 para que la animaciÃ³n siempre funcione bien
         SettingsPopUp.transform.localScale = Vector3.zero;
 
         LeanTween.scale(SettingsPopUp, Vector3.one, 0.5f) // Vector3.one es lo mismo que new Vector3(1, 1, 1)
             .setEaseOutBack()
-            .setIgnoreTimeScale(true); // Útil si el menú se puede abrir en pausa
+            .setIgnoreTimeScale(true); // Ãštil si el menÃº se puede abrir en pausa
 
         isSettingsPopUpActive = true;
     }
@@ -152,13 +152,13 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Cierra la aplicación o detiene la ejecución en el editor.
+    /// Cierra la aplicaciÃ³n o detiene la ejecuciÃ³n en el editor.
     /// </summary>
     public void QuitGame()
     {
-        Debug.Log("El jugador ha pulsado el botón de salir.");
+        Debug.Log("El jugador ha pulsado el botÃ³n de salir.");
 
-        
+
         #if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;
         
@@ -168,6 +168,10 @@ public class MenuManager : MonoBehaviour
         #endif
     }
 
+    /// <summary>
+    /// Abre una URL en el navegador.
+    /// </summary>
+    /// <param name="url"></param>
     public void OpenUrl(string url)
     {
         if (!string.IsNullOrEmpty(url))
@@ -176,10 +180,14 @@ public class MenuManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("La URL proporcionada es nula o vacía.");
+            Debug.LogWarning("La URL proporcionada es nula o vacï¿½a.");
         }
     }
 
+    /// <summary>
+    /// Corrutina que gestiona el cierre de sesiÃ³n del usuario.
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator LogOutCoroutine()
     {
         PlayerLoggedIn.ClearPlayerData();
@@ -187,7 +195,9 @@ public class MenuManager : MonoBehaviour
         yield return StartCoroutine(SupabaseDao.Instance.LogOutUser());
         SceneManager.LoadScene("MenuScene");
     }
-
+    /// <summary>
+    /// Llama a la corrutina para cerrar sesiÃ³n.
+    /// </summary>
     public void LogOut()
     {
         StartCoroutine(LogOutCoroutine());

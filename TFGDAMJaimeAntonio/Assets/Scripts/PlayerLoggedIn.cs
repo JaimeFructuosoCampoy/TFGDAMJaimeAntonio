@@ -15,6 +15,12 @@ public class PlayerLoggedIn : MonoBehaviour
     public static List<InventoryItem> Inventory { get; set; }
     public static InventoryItem ItemEquiped { get; set; }
 
+
+    /// <summary>
+    /// Inicializa o actualiza los datos del jugador.
+    /// Si el jugador ya tiene datos, los actualiza; si no, los inicializa.
+    /// </summary>
+    /// <param name="data"></param>
     public static void InitializeOrUpdatePlayerData(PlayerData data)
     {
         PlayerId = data.id;
@@ -25,11 +31,18 @@ public class PlayerLoggedIn : MonoBehaviour
         Diamonds = data.diamonds;
     }
 
+    /// <summary>
+    /// Inicializa o actualiza el inventario del jugador.
+    /// </summary>
+    /// <param name="inventory"></param>
     public static void InitializeOrUpdateInventory(List<InventoryItem> inventory)
     {
         Inventory = inventory;
     }
 
+    /// <summary>
+    /// Limpia los datos del jugador.
+    /// </summary>
     public static void ClearPlayerData()
     {
         PlayerId = null;

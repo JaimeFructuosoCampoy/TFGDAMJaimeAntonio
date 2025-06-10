@@ -37,7 +37,7 @@ public class PlayerScript : MonoBehaviour
             MobileControls.SetActive(Application.platform == RuntimePlatform.Android);
     }
 
-    // M�todos para EventTrigger
+    // Métodos para EventTrigger
     public void OnLeftDown() { isLeftPressed = true; }
     public void OnLeftUp() { isLeftPressed = false; }
     public void OnRightDown() { isRightPressed = true; }
@@ -53,6 +53,10 @@ public class PlayerScript : MonoBehaviour
         CheckJump();
     }
 
+    /// <summary>
+    /// Verifica el movimiento del jugador basado en la entrada del teclado o los botones móviles.
+    /// Actualiza la velocidad del Rigidbody2D en consecuencia.
+    /// </summary>
     private void CheckMovement()
     {
         float move = 0;
@@ -71,6 +75,10 @@ public class PlayerScript : MonoBehaviour
         Rb2D.velocity = new Vector2(move * MovementSpeed, Rb2D.velocity.y);
     }
 
+    /// <summary>
+    /// Verifica si el jugador puede saltar y aplica la velocidad de salto si es posible.
+    /// El salto se activa con la tecla de espacio, flecha arriba, 'w' o el botón de salto móvil.
+    /// /// </summary>
     private void CheckJump()
     {
         if ((Input.GetKey(KeyCode.Space) || Input.GetKey("up") || Input.GetKey("w") || isJumpPressed) && CanJump)
@@ -80,6 +88,11 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Maneja las colisiones del jugador con otros objetos.
+    /// Detecta colisiones con el suelo, paredes, plataformas, enemigos y meteoritos.
+    /// Si colisiona con un enemigo o meteorito sin el casco adecuado, termina el juego.
+    /// </summary>
     private void OnCollisionEnter2D(Collision2D collision)
     {
         string collisionGameobjectTag = collision.gameObject.tag;
@@ -106,6 +119,10 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Maneja la salida de colisiones del jugador con otros objetos.
+    /// Desactiva la capacidad de salto cuando el jugador sale de una colisión con el suelo, paredes o plataformas.
+    /// </summary>
     private void OnCollisionExit2D(Collision2D collision)
     {
         string collisionGameobjectTag = collision.gameObject.tag;
@@ -119,6 +136,12 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Maneja las colisiones del jugador con objetos que tienen un collider trigger.
+    /// Detecta colisiones con monedas y enemigos.
+    /// Si colisiona con una moneda, la destruye y aumenta el contador de monedas.
+    /// Si colisiona con un enemigo, termina el juego.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         string triggerGameobjectTag = collision.gameObject.tag;
@@ -128,7 +151,7 @@ public class PlayerScript : MonoBehaviour
                 Destroy(collision.gameObject);
                 Coins++;
                 CoinsText.SetText(Coins.ToString());
-                
+
                 break;
             case "Enemy":
                 GlobalData.GameOver = true;
@@ -136,6 +159,9 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Propiedad para obtener el número de monedas del jugador.
+    /// </summary>
     public int GetCoins
     {
         get { return Coins; }

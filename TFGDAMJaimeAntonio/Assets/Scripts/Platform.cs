@@ -31,12 +31,15 @@ public class Platform : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Maneja la colisi√≥n con paredes. Cambia la direcci√≥n de movimiento al chocar con una pared.
+    /// </summary>
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("ColisiÛn con: " + collision.collider.name); // Agreg· esto
+        Debug.Log("Colisi√≥n con: " + collision.collider.name); // Agreg√≥ esto
         if (collision.collider.CompareTag("Wall"))
         {
-            Debug.Log("°ColisiÛn con pared!");
+            Debug.Log("Colisi√≥n con pared!");
             IsMovingRight = !IsMovingRight;
             StartPos = rb.position;
         }
