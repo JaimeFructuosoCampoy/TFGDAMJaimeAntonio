@@ -184,6 +184,9 @@ public class GameManager : MonoBehaviour
     {
         BackgroundQuit();
         GlobalData.GameOver = false;
+        PlayerLoggedIn.Points += PointCount;
+        PlayerLoggedIn.Coins += Player.GetComponent<PlayerScript>().Coins;
+        StartCoroutine(SupabaseDao.Instance.SavePlayerScores(PlayerLoggedIn.Points, PlayerLoggedIn.Coins));
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -232,7 +235,7 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            TimeUntilNewCataclysm = UnityEngine.Random.Range(5f, 30f);
+            TimeUntilNewCataclysm = UnityEngine.Random.Range(5f, 20f);
             Debug.Log("Se esperarn " + TimeUntilNewCataclysm + " segundos para ejecutar el siguiente cataclismo");
             yield return new WaitForSeconds(TimeUntilNewCataclysm);
             StartCoroutine(SelectAndStartCataclysm());
