@@ -106,13 +106,6 @@ public class GameManager : MonoBehaviour
         InitializeKeyValueCataclysmUbication();
         InitializeKeyValueEnemyUbication();
 
-        if (ButtonPause != null)
-            ButtonPause.onClick.AddListener(SwitchPause);
-        if (ButtonContinue != null)
-            ButtonContinue.onClick.AddListener(SwitchPause);
-        if (ButtonPlayAgain != null)
-            ButtonPlayAgain.onClick.AddListener(HideGameOverMenuAndRestart);
-
         //Solo aseguramos la escala
         if (GameOverObject != null)
             GameOverObject.transform.localScale = Vector3.zero;
@@ -493,30 +486,33 @@ public class GameManager : MonoBehaviour
         {
             EquipedItem = null;
             return;
-        }
-
-        string equipedObject = PlayerLoggedIn.ItemEquiped.name;
-        switch (equipedObject)
+        } 
+        else
         {
-            case "Mete-Helmet":
-                EquipedItem = Instantiate(ItemMeteHelmetPrefab, Player.transform);
-                EquipedItem.transform.localPosition = new Vector3(0.002f, 0.192f, 0);
-                EquipedItem.transform.localRotation = Quaternion.identity;
-                EquipedItem.transform.localScale = new Vector3(0.12f, 0.12f, 0.5357143f);
-                break;
-            case "Metal Umbrella":
-                EquipedItem = Instantiate(ItemMetalUmbrellaPrefab, Player.transform);
-                EquipedItem.transform.localPosition = new Vector3(0f, 0.2f, 0);
-                EquipedItem.transform.localRotation = Quaternion.identity;
-                EquipedItem.transform.localScale = new Vector3(0.05f, 0.05f, 1f);
-                break;
-            case "Bouncing boots":
-                //Equipar botas
-                break;
-            default:
-                Debug.LogWarning("Objeto equipado no reconocido: " + equipedObject);
-                break;
+            string equipedObject = PlayerLoggedIn.ItemEquiped.name;
+            switch (equipedObject)
+            {
+                case "Mete-Helmet":
+                    EquipedItem = Instantiate(ItemMeteHelmetPrefab, Player.transform);
+                    EquipedItem.transform.localPosition = new Vector3(0.002f, 0.192f, 0);
+                    EquipedItem.transform.localRotation = Quaternion.identity;
+                    EquipedItem.transform.localScale = new Vector3(0.12f, 0.12f, 0.5357143f);
+                    break;
+                case "Metal Umbrella":
+                    EquipedItem = Instantiate(ItemMetalUmbrellaPrefab, Player.transform);
+                    EquipedItem.transform.localPosition = new Vector3(0f, 0.2f, 0);
+                    EquipedItem.transform.localRotation = Quaternion.identity;
+                    EquipedItem.transform.localScale = new Vector3(0.05f, 0.05f, 1f);
+                    break;
+                case "Bouncing boots":
+                    //Equipar botas
+                    break;
+                default:
+                    Debug.LogWarning("Objeto equipado no reconocido: " + equipedObject);
+                    break;
+            }
         }
+        
     }
     IEnumerator WaitUntilCoin()
     {
