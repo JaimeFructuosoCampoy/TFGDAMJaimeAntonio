@@ -100,8 +100,16 @@ public class PlayerScript : MonoBehaviour
         string tag = collision.gameObject.tag;
         if (tag == "Ground" || tag == "Wall" || tag == "Platform")
         {
-            groundContacts++;
-            CanJump = true;
+            // Comprobar si la colisión es por abajo
+            foreach (ContactPoint2D contact in collision.contacts)
+            {
+                if (contact.normal.y > 0.5f) // 0.5 es un umbral razonable para "hacia arriba"
+                {
+                    groundContacts++;
+                    CanJump = true;
+                    break;
+                }
+            }
         }
         else if (tag == "Enemy")
         {
@@ -167,6 +175,5 @@ public class PlayerScript : MonoBehaviour
     {
         get { return Coins; }
     }
-
 
 }
