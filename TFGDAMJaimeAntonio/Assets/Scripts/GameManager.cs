@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
     private SpriteRenderer PlayerSpriteRenderer;
     private SpriteRenderer ItemSpriteRenderer;
     private GameObject EquipedItem;
+    public GameObject CoinsParent;
 
     //Manager de IA
     public QuestionHandler questionHandler;
@@ -56,6 +57,7 @@ public class GameManager : MonoBehaviour
 
     //Panel negro de fondo para los popups
     public GameObject backBlack;
+    public GameObject CoinPrefab;
 
     //Cataclysmos posibles
     private enum Cataclysms
@@ -88,7 +90,7 @@ public class GameManager : MonoBehaviour
     /// Inicializa el estado del juego, configura los listeners de los botones y congela el tiempo para la pregunta inicial.
     /// </summary>
     void Start() 
-    { 
+    {
         Time.timeScale = 0f;
         CheckEquipedObject();
         PlayerSpriteRenderer = Player.GetComponent<SpriteRenderer>();
@@ -268,7 +270,7 @@ public class GameManager : MonoBehaviour
             if (v.HasValue)
             {
                 GameObject instance = Instantiate(CataclysmsObjects[cataclysm], (Vector3)v, Quaternion.identity);
-                int secondsUntilDestroy = UnityEngine.Random.Range(0, 30); //Hay que convertir estos valores en atributos
+                int secondsUntilDestroy = UnityEngine.Random.Range(10, 30); //Hay que convertir estos valores en atributos
                 Debug.Log("El cataclismo " + (Cataclysms)cataclysm + " ser destruido en " + secondsUntilDestroy);
                 yield return new WaitForSeconds(secondsUntilDestroy);
                 Destroy(instance);
@@ -413,6 +415,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         StartCoroutine(WaitUntilCataclysm());
         StartCoroutine(WaitUntilEnemy());
+        StartCoroutine(WaitUntilCoin());
     }
 
     /// <summary>
@@ -514,5 +517,32 @@ public class GameManager : MonoBehaviour
                 Debug.LogWarning("Objeto equipado no reconocido: " + equipedObject);
                 break;
         }
+    }
+    IEnumerator WaitUntilCoin()
+    {
+        while (true)
+        {
+            float timeUntilNewCoin = UnityEngine.Random.Range(5f, 10f); // Ajusta el rango a tu gusto
+            Debug.Log("Se esperarán " + timeUntilNewCoin + " segundos para generar una nueva moneda");
+            yield return new WaitForSeconds(timeUntilNewCoin);
+            StartCoroutine(SpawnCoin());
+        }
+    }
+
+    IEnumerator SpawnCoin()
+    {
+        // Genera una posición aleatoria dentro de los límites del escenario  
+        float y = UnityEngine.Random.Range(-1f, 5f);
+        float x = UnityEngine.Random.Range(-8f, 8f);
+        Vector3 spawnPosition = new Vector3(x, y, 0f);
+
+
+        // Instancia la moneda como hija del objeto "Coins"  
+        GameObject coinInstance = Instantiate(CoinPrefab, spawnPosition, Quaternion.identity, CoinsParent.transform);
+
+        int secondsUntilDestroy = UnityEngine.Random.Range(30, 60);
+        Debug.Log("La moneda será destruida en " + secondsUntilDestroy + " segundos");
+        yield return new WaitForSeconds(secondsUntilDestroy);
+        Destroy(coinInstance);
     }
 }

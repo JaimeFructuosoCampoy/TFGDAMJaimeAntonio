@@ -26,6 +26,8 @@ public class PlayerScript : MonoBehaviour
     private bool isRightPressed = false;
     private bool isJumpPressed = false;
 
+    private int groundContacts = 0;
+
     // Start is called before the first frame update  
     void Start()
     {
@@ -95,31 +97,29 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        string collisionGameobjectTag = collision.gameObject.tag;
-        switch (collisionGameobjectTag)
+        string tag = collision.gameObject.tag;
+        if (tag == "Ground" || tag == "Wall" || tag == "Platform")
         {
-            case "Ground":
-            case "Wall":
-            case "Platform":
-                //var directionsAndWays = GlobalFunctions.DetectDirectionAndWay(collision);  
-                //var directionAndWay = directionsAndWays[0];  
-                //if (!directionAndWay.Item1 && !directionAndWay.Item2) // Si la colisi�n es por arriba  
-                //    CanJump = false;  
-                //else if (!directionAndWay.Item1 || directionAndWay.Item2) // Si la colisi�n es por abajo  
-                //    CanJump = true;  
-                CanJump = true;
-                break;
-            case "Enemy":
+            groundContacts++;
+            CanJump = true;
+        }
+        else if (tag == "Enemy")
+        {
+            GlobalData.GameOver = true;
+        }
+        else if (tag == "Meteorite")
+        {
+            if (PlayerLoggedIn.ItemEquiped == null || PlayerLoggedIn.ItemEquiped.name != "Mete-Helmet")
+            {
                 GlobalData.GameOver = true;
-                break;
-            case "Meteorite":
-                if (PlayerLoggedIn.ItemEquiped.name != "Mete-Helmet")
-                    GlobalData.GameOver = true;
-                break;
-            case "Gout":
-                if (PlayerLoggedIn.ItemEquiped == null || PlayerLoggedIn.ItemEquiped.name != "Metal Umbrella")
-                    GlobalData.GameOver = true;
-                break;
+            }
+        }
+        else if (tag == "Gout")
+        {
+            if (PlayerLoggedIn.ItemEquiped == null || PlayerLoggedIn.ItemEquiped.name != "Metal Umbrella")
+            {
+                GlobalData.GameOver = true;
+            }
         }
     }
 
@@ -129,14 +129,11 @@ public class PlayerScript : MonoBehaviour
     /// </summary>
     private void OnCollisionExit2D(Collision2D collision)
     {
-        string collisionGameobjectTag = collision.gameObject.tag;
-        switch (collisionGameobjectTag)
+        string tag = collision.gameObject.tag;
+        if (tag == "Ground" || tag == "Wall" || tag == "Platform")
         {
-            case "Ground":
-            case "Wall":
-            case "Platform":
-                CanJump = false;
-                break;
+            groundContacts = Mathf.Max(groundContacts - 1, 0);
+            CanJump = groundContacts > 0;
         }
     }
 
