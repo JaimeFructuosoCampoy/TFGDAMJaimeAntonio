@@ -486,6 +486,12 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void CheckEquipedObject()
     {
+        if (PlayerLoggedIn.ItemEquiped == null)
+        {
+            EquipedItem = null;
+            return;
+        }
+
         string equipedObject = PlayerLoggedIn.ItemEquiped.name;
         switch (equipedObject)
         {
